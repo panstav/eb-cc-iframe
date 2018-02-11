@@ -19,6 +19,7 @@ response.setDateHeader("Expires", -1);
         <meta http-equiv="cache-control" content="no-cache">
         <meta http-equiv="pragma" content="no-cache">
         <meta http-equiv="expires" content="-1">
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
         <script type="text/javascript" src="<%=masterPassUrl%>"></script>
@@ -33,7 +34,39 @@ response.setDateHeader("Expires", -1);
         <title>
         <%=pageTitle%>
         </title>
+
+        <script type="text/javascript">
+            jQuery(function($) {
+                var taint, d, x, y;
+
+                $(".material-button").click(function(e){
+
+                    if ($(this).find(".taint").length == 0) {
+                        $(this).prepend("<span class='taint'></span>")
+                    }
+
+                    taint = $(this).find(".taint");
+                    taint.removeClass("drop");
+
+                    if (!taint.height() && !taint.width()) {
+                        d = Math.max($(this).outerWidth(), $(this).outerHeight());
+                        taint.css({height: d, width: d});
+                    }
+
+                    x = e.pageX - $(this).offset().left - taint.width()/2;
+                    y = e.pageY - $(this).offset().top - taint.height()/2;
+
+                    taint.css({ top: y+'px', left: x+'px' }).addClass("drop");
+                });
+            });
+        </script>
+
         <style type="text/css">
+
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
         html body :focus {
             box-shadow: 0 0 5px 3px #18b363,0 0 0 #fff inset !important;
         }
@@ -61,43 +94,142 @@ response.setDateHeader("Expires", -1);
         a[data-src=cancel] {
                 text-decoration: none;
         }
-        html body input[type=reset] {
-            display: none !important;
+
+        * {
+            box-sizing:border-box;
         }
-        input[type=submit], input[type=reset], input[type=button]{
-            padding: 0 !important;
-            margin-left: 3px !important;
-            width: 87px !important;
-            height: 30px !important;
-            border: none !important;
-            background-color: rgb(24, 179, 99) !important;
-            color: #FFF !important;
-            box-shadow: 0 0 10px 0.5px rgba(0, 0, 0, 0) !important;
-            -webkit-transition: all 0.15s linear !important;
-            -moz-transition: all 0.15s linear !important;
-            transition: all 0.15s linear !important;
-            margin: 0 auto !important;
-            display: block !important;
-            border-radius: 0px !important;
-            font-size: 15px;
-            float: right;
-            border-left: 2px solid #fff !important;
+
+        .material-button {
+            box-shadow: 0px 3px 6px rgba(0,0,0,0.3);
+            transition: all 200ms ease-in-out;
+            cursor: pointer;
         }
-        input[type=button], input[type=reset]  {
-            background-color: #9e9e9e !important;
-            color: #FFF !important;
+
+        .taint {
+            display: block;
+            position: absolute;
+            background: rgba(130, 177, 255, 0.5);
+            border-radius: 100%;
+            -webkit-transform: scale(0);
+            transform: scale(0);
         }
-        input[type=submit]:hover, input[type=reset]:hover, input[type=button]:hover {
-            box-shadow: 0 0 10px 0.5px rgba(0, 0, 0, 0.2) !important;
-            -webkit-transform: scale(0.98) !important;
-            -moz-transform: scale(0.98) !important;
-            -ms-transform: scale(0.98) !important;
-            -o-transform: scale(0.98) !important;
-            transform: scale(0.98) !important;
-            cursor: pointer !important;
+
+        .taint.drop {
+            -webkit-animation: ripple 0.65s linear;
+            animation: ripple 0.65s linear;
         }
-        input[type=submit]:active, input[type=reset]:active, input[type=button]:active, input[type=submit]:focus, input[type=reset]:focus, input[type=button]:focus {
-            outline: none !important;
+
+        @-webkit-keyframes ripple {
+            100% {
+                opacity: 0;
+                -webkit-transform: scale(2.5);
+                transform: scale(2.5);
+            }
+        }
+        @keyframes ripple {
+            100% {
+                opacity: 0;
+                -webkit-transform: scale(2.5);
+                transform: scale(2.5);
+            }
+        }
+
+        /* form starting stylings ------------------------------- */
+        .material-input-group {
+            position:relative;
+            margin-bottom:45px;
+        }
+        .material-input-group input {
+            font-size:18px;
+            padding:10px 10px 10px 5px;
+            display:block;
+            width:300px;
+            border:none;
+            border-bottom:1px solid #757575;
+        }
+        .material-input-group input:focus {
+            outline:none;
+        }
+
+        /* LABEL ======================================= */
+        .material-input-group label {
+            color:#999;
+            font-size:18px;
+            font-weight:normal;
+            position:absolute;
+            pointer-events:none;
+            left:5px;
+            top:10px;
+            transition:0.2s ease all;
+            -moz-transition:0.2s ease all;
+            -webkit-transition:0.2s ease all;
+        }
+
+        /* active state */
+        .material-input-group input:focus ~ label, .material-input-group input:valid ~ label 		{
+            top:-20px;
+            font-size:14px;
+            color:#5264AE;
+        }
+
+        /* BOTTOM BARS ================================= */
+        .material-input-group .bar {
+            position:relative; display:block; width:300px;
+        }
+
+        .material-input-group .bar:before, .bar:after {
+            content:'';
+            height:2px;
+            width:0;
+            bottom:1px;
+            position:absolute;
+            background:#5264AE;
+            transition:0.2s ease all;
+            -moz-transition:0.2s ease all;
+            -webkit-transition:0.2s ease all;
+        }
+        .material-input-group .bar:before {
+            left:50%;
+        }
+        .material-input-group .bar:after {
+            right:50%;
+        }
+
+        /* active state */
+        .material-input-group input:focus ~ .bar:before, .material-input-group input:focus ~ .bar:after {
+            width:50%;
+        }
+
+        /* HIGHLIGHTER ================================== */
+        .material-input-group .highlight {
+            position:absolute;
+            height:60%;
+            width:100px;
+            top:25%;
+            left:0;
+            pointer-events:none;
+            opacity:0.5;
+        }
+
+        /* active state */
+        .material-input-group input:focus ~ .highlight {
+            -webkit-animation:inputHighlighter 0.3s ease;
+            -moz-animation:inputHighlighter 0.3s ease;
+            animation:inputHighlighter 0.3s ease;
+        }
+
+        /* ANIMATIONS ================ */
+        @-webkit-keyframes inputHighlighter {
+            from { background:#5264AE; }
+            to 	{ width:0; background:transparent; }
+        }
+        @-moz-keyframes inputHighlighter {
+            from { background:#5264AE; }
+            to 	{ width:0; background:transparent; }
+        }
+        @keyframes inputHighlighter {
+            from { background:#5264AE; }
+            to 	{ width:0; background:transparent; }
         }
         </style>
     </head>
@@ -128,12 +260,14 @@ response.setDateHeader("Expires", -1);
                 <input type="hidden" name="userData10" value="" />-->
                 
                 <div class="grid_12 row8">
-                    <div class="grid_1 row8 td_style_fieldName">
-                        <%=CCNumber%>:
-                    </div>
-                    <div class="grid_8 row8 td_style_fieldValue">
+
+                    <div class="material-input-group">
                         <input type="text" id="Track2CardNo" name="Track2CardNo" maxlength="80" width="100%" dir="ltr" autocomplete="off" onkeyup="limitInput(this,80)" onchange="return validateTrack2CardNo();" disabled />
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                        <label><%=CCNumber%>:</label>
                     </div>
+
                     <div class="grid_4 row8 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
                     <div class="grid_8 row8 td_style_invalidField" id="invalidCardNumber">&nbsp;</div>
                     <div class="grid_4 row8 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
@@ -167,16 +301,18 @@ response.setDateHeader("Expires", -1);
                     <div class="grid_8 row9 td_style_invalidField" id="invalidCardExp">&nbsp;</div>
                 </div>
                 <div class="grid_12 row10">
-                    <div class="grid_1 row10 td_style_fieldName">
-                        CVV:
-                    </div>
-                    <div class="grid_8 row10 td_style_fieldValue">
+
+                    <div class="material-input-group">
                         <input type="text" pattern="[0-9]*" name="cvv" id="cvv" maxlength="4" style="width: 50px;" dir="ltr" autocomplete="off" onkeyup="limitInput(this,4)" onchange="return validateCvv();" disabled />
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                        <label>CVV:</label>
                         <img id="qm" src="merchantPages/ResponsiveWebSources/images/qm.png" onmouseover="showHideCVVhelp();" onmouseout="showHideCVVhelp();" style="cursor:pointer;" />
                         <div id="CVVhelp" style="display: none; position: absolute; border: 1px #cccccc solid; padding: 10px; background: white;">
                             <img src="merchantPages/ResponsiveWebSources/images/cvv.jpg" />
                         </div>
                     </div>
+
                     <div class="grid_4 row10 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
                     <div class="grid_8 row10 td_style_invalidField" id="invalidCvv">&nbsp;</div>
                 </div>
@@ -198,16 +334,19 @@ response.setDateHeader("Expires", -1);
                 </div>
                 -->
                 <div class="grid_12 row12">
-                    <div class="grid_1 row12 td_style_fieldName">
-                        <%=CCPId%>:
-                    </div>
-                    <div class="grid_8 row12 td_style_fieldValue">
+
+                    <div class="material-input-group">
                         <input type="text" pattern="[0-9]*" id="personalId" name="personalId" maxlength="9" dir="ltr" autocomplete="off" onkeyup="limitInput(this,9)" onchange="return validatePersonalId()" disabled />
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                        <label><%=CCPId%>:</label>
                     </div>
+
                     <div class="grid_4 row12 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
                     <div class="grid_8 row12 td_style_invalidField" id="invalidPersonalId">&nbsp;</div>
                 </div>
-                <div id="divPayments" style="display:<%=showPayments%>" ;>
+
+                <div id=" " style="display:<%=showPayments%>" ;>
                     <div class="grid_12 rowPayments" ;>
                         <div class="grid_4 rowPayments td_style_fieldPayments">
                             <%=numberOfPaymentsLabel%>
@@ -251,11 +390,13 @@ response.setDateHeader("Expires", -1);
                         </div>
                     </div>
                 </div>
+
                 <div id="form_buttons" class="grid_12 row13 td_style_fieldValue">
-                    <input type="submit" id="submitBtn" value="<%=formSend%>" disabled />
-                    <input id="resetBtn" type="reset" value="<%=formReset%>" onclick="clearFields()" disabled />
+                    <input class="material-button" type="submit" id="submitBtn" value="<%=formSend%>" disabled />
+                    <input class="material-button" id="resetBtn" type="reset" value="<%=formReset%>" onclick="clearFields()" disabled />
                     <%=getCancelBtnHTML("")%>
                 </div>
+
             </form>
             <div>
                 <div id="form_buttons" class="td_style_fieldValue rowButtons">
