@@ -2069,18 +2069,18 @@
 <body onload="onLoad();"><div id="sk-accessibility" class="rtl block"><div id="sk-header"> <button type="button" data-src="open" data-stat="open" data-state="1" id="sk-open" style="width: 100px;">תפריט נגישות</button></div><nav id="sk-panel" aria-expanded="false"><ul role="menu"><li role="menuitem"> <button type="button" data-src="enlarge-text" data-stat="enlarge-text" data-state="1" id="sk-enlarge-text">הגדלת טקסט</button></li><li role="menuitem"> <button type="button" data-src="reduce-text" data-stat="reduce-text" data-state="1" id="sk-reduce-text">הקטנת טקסט</button></li><li role="menuitem"> <button type="button" data-src="readable-text" data-stat="readable-text" data-state="1" id="sk-readable-text">טקסט קריא</button></li><li role="menuitem"> <button type="button" data-src="contrast" data-stat="contrast" data-state="1" id="sk-contrast">ניגודיות גבוהה</button></li><li role="menuitem"> <button type="button" data-src="black-white" data-stat="black-white" data-state="1" id="sk-black-white">שחור ולבן</button></li><li role="menuitem"> <button type="button" data-src="default" data-stat="default" data-state="1" id="sk-default">איפוס</button></li><li role="menuitem"> <button type="button" data-src="statement" data-stat="statement" data-state="0" data-href="https://www.creditguard.co.il/%D7%A0%D7%92%D7%99%D7%A9%D7%95%D7%AA" data-href-target="_blank" id="sk-statement">הצהרת נגישות</button></li><li role="menuitem"> <button type="button" data-src="close" data-stat="close" data-state="1" id="sk-close">סגירה</button></li></ul></nav></div><h1 class="scr-reader ">דף תשלום מאובטח</h1>
 <!--  DISPLAY TRANSACTION INFORMATION -->
 <div class="container">
-    <form id="masterPassForm" onsubmit="" method="POST" action="ProcessMasterPass?txId=<%=mpiTxnId%>">
-        <input type="hidden" name="txId" value="<%=mpiTxnId%>" />
+    <form id="masterPassForm" onsubmit="" method="POST" action="ProcessMasterPass?txId=3fc3ea9b-9152-4466-b2af-0238e2d1c9fe">
+        <input type="hidden" name="txId" value="3fc3ea9b-9152-4466-b2af-0238e2d1c9fe">
     </form>
     <form id="creditForm" onsubmit="return validateFormTrack2CardNo();" method="POST" action="ProcessCreditCard">
-        <input type="hidden" name="txId" value="<%=mpiTxnId%>" />
-        <input type="hidden" name="lang" value="<%=lang%>" />
-        <input type="hidden" name="cardNumber" id="cardNumber" value="" autocomplete="off" />
-        <input type="hidden" name="track2" id="track2" value="" autocomplete="off" />
-        <input type="hidden" name="last4d" value="" autocomplete="off" />
-        <input type="hidden" name="transactionCode" value="Phone" autocomplete="off" />
-        <input type="hidden" id="listPaymentsInterestValues" name="listPaymentsInterestValues" value="<%=listPaymentsInterestValues%>" />
-        <input type="hidden" id="listNumberOfPaymentsValues" name="listNumberOfPaymentsValues" value="<%=listNumberOfPaymentsValues%>" />
+        <input type="hidden" name="txId" value="3fc3ea9b-9152-4466-b2af-0238e2d1c9fe">
+        <input type="hidden" name="lang" value="HE">
+        <input type="hidden" name="cardNumber" id="cardNumber" value="" autocomplete="off">
+        <input type="hidden" name="track2" id="track2" value="" autocomplete="off">
+        <input type="hidden" name="last4d" value="" autocomplete="off">
+        <input type="hidden" name="transactionCode" value="Phone" autocomplete="off">
+        <input type="hidden" id="listPaymentsInterestValues" name="listPaymentsInterestValues" value="">
+        <input type="hidden" id="listNumberOfPaymentsValues" name="listNumberOfPaymentsValues" value="0">
         <!--<input type="hidden" name="userData1" value="" />
         <input type="hidden" name="userData2" value="" />
         <input type="hidden" name="userData3" value="" />
@@ -2094,26 +2094,26 @@
 
         <div class="grid_12 row8">
 
-            <div class="material-input-group">
-                <input required type="text" id="Track2CardNo" name="Track2CardNo" maxlength="80" width="100%" dir="ltr" autocomplete="off" onkeyup="limitInput(this,80)" onchange="return validateTrack2CardNo();" disabled />
+            <div class="material-input-group"><label for="Track2CardNo" class="scr-reader" aria-hidden="true" data-src="empty-label" aria-label="לייבל ריק">לייבל ריק</label>
+                <input required="" type="text" id="Track2CardNo" name="Track2CardNo" maxlength="80" width="100%" dir="ltr" autocomplete="off" onkeyup="limitInput(this,80)" onchange="return validateTrack2CardNo();" data-src="Track2CardNo" aria-required="true" aria-label="מספר כרטיס">
                 <span class="bar"></span>
-                <label><%=CCNumber%>:</label>
+                <label>מספר כרטיס:</label>
             </div>
 
-            <div class="grid_4 row8 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
-            <div class="grid_8 row8 td_style_invalidField" id="invalidCardNumber">&nbsp;</div>
-            <div class="grid_4 row8 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
-            <div class="grid_8 row8 td_style_invalidField" id="invalidTrack2">&nbsp;</div>
+            <div class="grid_4 row8 td_style_invalidField invalid_field_place_holder" role="alert">&nbsp;</div>
+            <div class="grid_8 row8 td_style_invalidField" id="invalidCardNumber" role="alert">&nbsp;</div>
+            <div class="grid_4 row8 td_style_invalidField invalid_field_place_holder" role="alert">&nbsp;</div>
+            <div class="grid_8 row8 td_style_invalidField" id="invalidTrack2" role="alert">&nbsp;</div>
         </div>
         <div class="grid_12 row9" style="margin: 1rem 0;">
             <div class="grid_3 row9 td_style_fieldName">
-                <%=CCExp%>:
+                תוקף כרטיס:
             </div>
-            <div class="grid_8 row9">
-                <select id="expYear" name="expYear" onchange="validateExpDateOnChange();" disabled>
-                    <%=expYear%>
+            <div class="grid_8 row9 td_style_fieldValue">
+                <select id="expYear" name="expYear" onchange="validateExpDateOnChange();" data-src="expYear" aria-required="true" aria-label="שנה של תוקף הכרטיס">
+                    <option value=""></option><option value="18">2018</option><option value="19">2019</option><option value="20">2020</option><option value="21">2021</option><option value="22">2022</option><option value="23">2023</option><option value="24">2024</option><option value="25">2025</option><option value="26">2026</option><option value="27">2027</option><option value="28">2028</option><option value="29">2029</option><option value="30">2030</option><option value="31">2031</option><option value="32">2032</option><option value="33">2033</option>
                 </select> -
-                <select id="expMonth" name="expMonth" onchange="validateExpDateOnChange();" disabled>
+                <select id="expMonth" name="expMonth" onchange="validateExpDateOnChange();" data-src="expMonth" aria-required="true" aria-label="החודש של תוקף הכרטיס">
                     <option value=""></option>
                     <option value="01">01</option>
                     <option value="02">02</option>
@@ -2130,34 +2130,34 @@
                 </select>
             </div>
             <div class="grid_1 row9 invalid_field_place_holder">&nbsp;</div>
-            <div class="grid_8 row9 td_style_invalidField" id="invalidCardExp">&nbsp;</div>
+            <div class="grid_8 row9 td_style_invalidField" id="invalidCardExp" role="alert">&nbsp;</div>
         </div>
         <div class="grid_12 row10">
 
-            <div class="material-input-group" style="width: 5rem;">
-                <input required type="text" pattern="[0-9]*" name="cvv" id="cvv" maxlength="4" dir="ltr" autocomplete="off" onkeyup="limitInput(this,4)" onchange="return validateCvv();" disabled />
+            <div class="material-input-group" style="width: 5rem;"><label for="cvv" class="scr-reader" aria-hidden="true" data-src="empty-label" aria-label="לייבל ריק">לייבל ריק</label>
+                <input required="" type="text" pattern="[0-9]*" name="cvv" id="cvv" maxlength="4" dir="ltr" autocomplete="off" onkeyup="limitInput(this,4)" onchange="return validateCvv();" data-src="cvv" aria-required="true" aria-label="שלושת הספרות בגב בכרטיס">
                 <span class="bar"></span>
                 <label>CVV:</label>
-                <img id="qm" src="merchantPages/ResponsiveWebSources/images/qm.png" onmouseover="showHideCVVhelp();" onmouseout="showHideCVVhelp();" style="cursor:pointer;" />
-                <div id="CVVhelp" style="display: none; position: absolute; z-index: 1000; border: 1px #cccccc solid; padding: 10px; background: white;">
-                    <img src="merchantPages/ResponsiveWebSources/images/cvv.jpg" />
+                <img id="qm" src="merchantPages/ResponsiveWebSources/images/qm.png" onmouseover="showHideCVVhelp();" onmouseout="showHideCVVhelp();" style="cursor:pointer;" tabindex="-1" role="presentation" alt="">
+                <div id="CVVhelp" style="display: none; position: absolute; border: 1px #cccccc solid; padding: 10px; background: white;">
+                    <img src="merchantPages/ResponsiveWebSources/images/cvv.jpg" alt="" role="presentation">
                 </div>
             </div>
 
-            <div class="grid_4 row10 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
-            <div class="grid_8 row10 td_style_invalidField" id="invalidCvv">&nbsp;</div>
+            <div class="grid_4 row10 td_style_invalidField invalid_field_place_holder" role="alert">&nbsp;</div>
+            <div class="grid_8 row10 td_style_invalidField" id="invalidCvv" role="alert">&nbsp;</div>
         </div>
         <!--
         <div class="grid_12 row11">
             <div class="grid_1 row11 td_style_fieldName">
-                <%=cvv_wneb%>:
+                CVV לא הוקלד כי:
             </div>
             <div class="grid_8 row11 td_style_fieldValue">
                 <select id="cvv_wneb" name="cvv_wneb" onchange="cvv_wneb_changed();" disabled >
                     <option value=""></option>
-                    <option value="0"><%=cvv_wneb_0%></option>
-                    <option value="2"><%=cvv_wneb_2%></option>
-                    <option value="9"><%=cvv_wneb_9%></option>
+                    <option value="0">החלטת בית העסק</option>
+                    <option value="2">לא קריא</option>
+                    <option value="9">לא קיים</option>
                 </select>
             </div>
             <div class="grid_4 row10 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
@@ -2166,76 +2166,77 @@
         -->
         <div class="grid_12 row12">
 
-            <div class="material-input-group">
-                <input required type="text" pattern="[0-9]*" id="personalId" name="personalId" maxlength="9" dir="ltr" autocomplete="off" onkeyup="limitInput(this,9)" onchange="return validatePersonalId()" disabled />
+            <div class="material-input-group"><label for="personalId" class="scr-reader" aria-hidden="true" data-src="empty-label" aria-label="לייבל ריק">לייבל ריק</label>
+                <input required="" type="text" pattern="[0-9]*" id="personalId" name="personalId" maxlength="9" dir="ltr" autocomplete="off" onkeyup="limitInput(this,9)" onchange="return validatePersonalId()" data-src="personalId" aria-required="true" aria-label="תעודת זהות של בעל הכרטיס">
                 <span class="bar"></span>
-                <label><%=CCPId%>:</label>
+                <label>ת.ז בעל כרטיס:</label>
             </div>
 
-            <div class="grid_4 row12 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
-            <div class="grid_8 row12 td_style_invalidField" id="invalidPersonalId">&nbsp;</div>
+            <div class="grid_4 row12 td_style_invalidField invalid_field_place_holder" role="alert">&nbsp;</div>
+            <div class="grid_8 row12 td_style_invalidField" id="invalidPersonalId" role="alert">&nbsp;</div>
         </div>
 
-        <div id=" " style="display:<%=showPayments%>" ;>
-            <div class="grid_12 rowPayments" ;>
+        <div id=" " style="display:none" ;="">
+            <div class="grid_12 rowPayments" ;="">
                 <div class="grid_4 rowPayments td_style_fieldPayments">
-                    <%=numberOfPaymentsLabel%>
+                    מספר תשלומים
                 </div>
                 <div class="grid_3 rowPayments td_style_fieldValue">
-                    <%=NumberOfPaymentvalue%>
-                    <select id="numberOfPayments" name="numberOfPayments" style="display:<%=showSelectNumberOfPayments%>" onchange=<%=onchangeNumberOfPayments%>>
-                        <%=NumberOfPaymentsOptions%>
+
+                    <select id="numberOfPayments" name="numberOfPayments" style="display:none" onchange="" data-src="numberOfPayments" aria-required="true" aria-label="מספר תשלומים">
+
                     </select>
                 </div>
-                <div class="grid_12 row12 td_style_invalidField" style="width: 100%;" id="invalidNumberOfPayments">&nbsp;</div>
+                <div class="grid_12 row12 td_style_invalidField" style="width: 100%;" id="invalidNumberOfPayments" role="alert">&nbsp;</div>
             </div>
-            <div class="grid_12 rowPayments" style="display:<%=showFirstAndPeriodicalPayment%>" ;>
+            <div class="grid_12 rowPayments" style="display:none" ;="">
                 <div class="grid_4 rowPayments td_style_fieldPayments">
-                    <%=FirstPaymentLabel%>
+                    תשלום ראשון
                 </div>
                 <div class="grid_2 rowPayments td_style_fieldValue">
                     <div id="firstPaymentDisp" class="data_style_payment" disabled="disabled">
-                        <%=getFirstPayment()%>
+                        0.00
                     </div>
                 </div>
                 <div class="responsive_page_line_break"></div>
                 <div class="grid_4 rowPayments td_style_fieldPayments">
-                    <%=periodicalPaymentLabel%>
+                    שאר התשלומים
                 </div>
                 <div class="grid_2 rowPayments td_style_fieldValue">
                     <div id="periodicalPaymentDisp" class="data_style_payment" disabled="disabled">
-                        <%=getPeriodicalPayment()%>
+                        0.00
                     </div>
                 </div>
             </div>
-            <div class="grid_12 rowPayments" style="display:<%=showPaymentsInterest%>">
+            <div class="grid_12 rowPayments" style="display:none">
                 <div class="responsive_page_line_break"></div>
                 <div class="grid_4 rowPayments td_style_fieldPayments">
-                    <%=paymentsInterestLabel%>
+                    סכום הריבית
                 </div>
                 <div class="grid_2 rowPayments td_style_fieldValue">
                     <div id="paymentsInterestDisp" disabled="disabled" class="data_style_payment">
-                        <%=paymentsInterest%>
+                        0.0
                     </div>
                 </div>
             </div>
         </div>
 
         <div id="form_buttons" class="grid_12 row13 td_style_fieldValue">
-            <button id="submitBtn" type="submit" class="mui-button">
+            <button id="submitBtn" type="submit" class="mui-button" role="button">
                 <div class="ripple"></div>
-                <p><%=formSend%></p>
+                <p>שליחה</p>
             </button>
-            <!--<input class="material-button" type="submit" id="submitBtn" value="<%=formSend%>" disabled />-->
-            <!--<input class="material-button" id="resetBtn" type="reset" value="<%=formReset%>" onclick="clearFields()" disabled />-->
+            <!--<input class="material-button" type="submit" id="submitBtn" value="שליחה" disabled />-->
+            <!--<input class="material-button" id="resetBtn" type="reset" value="ניקוי" onclick="clearFields()" disabled />-->
+            <!--<a href="CancelProcess?txId=3fc3ea9b-9152-4466-b2af-0238e2d1c9fe" onclick="window.location='CancelProcess?txId=3fc3ea9b-9152-4466-b2af-0238e2d1c9fe';" data-src="cancel" aria-label="ביטול"><input id="cancelBtn" type="button" value="ביטול" tabindex="-1" role="button"><span class="scr-reader" aria-hidden="true" data-src="empty-label" aria-label="לייבל ריק">לייבל ריק</span></a>-->
         </div>
 
     </form>
     <div>
         <div id="form_buttons" class="td_style_fieldValue rowButtons">
-            <%=getMasterPassBtnHTML()%>
+
         </div>
-        <%=getResponsivePaymentsHTML()%>
+
     </div>
     <div id="loading" class="loading_invisible">
         <p id="loadingMsg" class="loading_invisible" aria-live="polite"></p>
