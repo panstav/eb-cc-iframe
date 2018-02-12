@@ -35,202 +35,233 @@ response.setDateHeader("Expires", -1);
         <%=pageTitle%>
         </title>
 
+        <!-- Material button with ripple -->
         <script type="text/javascript">
             jQuery(function($) {
-                var taint, d, x, y;
+                function createRipple(y, x, cb) {
+                    cb = cb || function(){};
+                    const ripple = '<div class="circle" style="top:' + y + 'px;left:' + x + 'px;"></div>';
+                    const _ripple = $(ripple);
+                    $('.ripple').append(_ripple);
+                    setTimeout(function() {
+                        _ripple.remove();
+                        cb();
+                    }, 900);
+                }
 
-                $(".material-button").click(function(e){
-
-                    if ($(this).find(".taint").length == 0) {
-                        $(this).prepend("<span class='taint'></span>")
-                    }
-
-                    taint = $(this).find(".taint");
-                    taint.removeClass("drop");
-
-                    if (!taint.height() && !taint.width()) {
-                        d = Math.max($(this).outerWidth(), $(this).outerHeight());
-                        taint.css({height: d, width: d});
-                    }
-
-                    x = e.pageX - $(this).offset().left - taint.width()/2;
-                    y = e.pageY - $(this).offset().top - taint.height()/2;
-
-                    taint.css({ top: y+'px', left: x+'px' }).addClass("drop");
+                $('.mui-button').mousedown(function(e) {
+                    const offset = $(e.target).offset();
+                    createRipple(e.pageY - offset.top, e.pageX - offset.left);
                 });
             });
         </script>
 
         <style type="text/css">
+            body {
+                font-family: 'Roboto', sans-serif;
+            }
 
-        body {
-            font-family: 'Roboto', sans-serif;
-        }
-
-        html body :focus {
-            box-shadow: 0 0 5px 3px #18b363,0 0 0 #fff inset !important;
-        }
-        .rtl #sk-header, .rtl #sk-panel {
-            right: auto !important;
-        }
-        html body #sk-accessibility {
-            margin-bottom: 0px;
-        }
-        html body #sk-header {
-            right: auto !important;
-            left: 0;
-        }
-        html body .block #sk-panel {
-            left: 7px;
-        }
-        html body .container {
-            padding: 5px 0 !important
-        }
-        input[type="text"], input[type="submit"], input[type="reset"], input[type="number"], select, .pci_image, #cancelBtn {
+            html body :focus {
+                box-shadow: 0 0 5px 3px #18b363,0 0 0 #fff inset !important;
+            }
+            .rtl #sk-header, .rtl #sk-panel {
+                right: auto !important;
+            }
+            html body #sk-accessibility {
+                margin-bottom: 0px;
+            }
+            html body #sk-header {
+                right: auto !important;
+                left: 0;
+            }
+            html body .block #sk-panel {
+                left: 7px;
+            }
+            html body .container {
+                padding: 2rem !important
+            }
+            input[type="text"], input[type="submit"], input[type="reset"], input[type="number"], select, .pci_image, #cancelBtn {
                 border-width: 0 0 1px 0 !important;
                 border-radius: 0 !important;
-        }
+            }
 
-        a[data-src=cancel] {
+            a[data-src=cancel] {
                 text-decoration: none;
-        }
-
-        * {
-            box-sizing:border-box;
-        }
-
-        .material-button {
-            box-shadow: 0px 3px 6px rgba(0,0,0,0.3);
-            transition: all 200ms ease-in-out;
-            cursor: pointer;
-        }
-
-        .taint {
-            display: block;
-            position: absolute;
-            background: rgba(130, 177, 255, 0.5);
-            border-radius: 100%;
-            -webkit-transform: scale(0);
-            transform: scale(0);
-        }
-
-        .taint.drop {
-            -webkit-animation: ripple 0.65s linear;
-            animation: ripple 0.65s linear;
-        }
-
-        @-webkit-keyframes ripple {
-            100% {
-                opacity: 0;
-                -webkit-transform: scale(2.5);
-                transform: scale(2.5);
             }
-        }
-        @keyframes ripple {
-            100% {
-                opacity: 0;
-                -webkit-transform: scale(2.5);
-                transform: scale(2.5);
+
+            * {
+                box-sizing:border-box;
             }
-        }
 
-        /* form starting stylings ------------------------------- */
-        .material-input-group {
-            position:relative;
-            margin-bottom:45px;
-        }
-        .material-input-group input {
-            font-size:18px;
-            padding:10px 10px 10px 5px;
-            display:block;
-            width:300px;
-            border:none;
-            border-bottom:1px solid #757575;
-        }
-        .material-input-group input:focus {
-            outline:none;
-        }
+            @-webkit-keyframes ripple {
+                100% {
+                    opacity: 0;
+                    -webkit-transform: scale(2.5);
+                    transform: scale(2.5);
+                }
+            }
+            @keyframes ripple {
+                100% {
+                    opacity: 0;
+                    -webkit-transform: scale(2.5);
+                    transform: scale(2.5);
+                }
+            }
 
-        /* LABEL ======================================= */
-        .material-input-group label {
-            color:#999;
-            font-size:18px;
-            font-weight:normal;
-            position:absolute;
-            pointer-events:none;
-            left:5px;
-            top:10px;
-            transition:0.2s ease all;
-            -moz-transition:0.2s ease all;
-            -webkit-transition:0.2s ease all;
-        }
+            /* form starting stylings ------------------------------- */
+            .material-input-group {
+                position:relative;
+                margin: 2rem 0 1rem;
+            }
+            .material-input-group input {
+                font-size:18px;
+                padding:10px 10px 10px 5px;
+                display:block;
+                width:100%;
+                border:none;
+                border-bottom:1px solid #757575;
+            }
+            .material-input-group input:focus {
+                outline:none;
+            }
 
-        /* active state */
-        .material-input-group input:focus ~ label, .material-input-group input:valid ~ label 		{
-            top:-20px;
-            font-size:14px;
-            color:#5264AE;
-        }
+            /* LABEL ======================================= */
+            .material-input-group label {
+                color:#999;
+                font-size:18px;
+                font-weight:normal;
+                position:absolute;
+                pointer-events:none;
+                right:5px;
+                top:10px;
+                transition:0.2s ease all;
+                -moz-transition:0.2s ease all;
+                -webkit-transition:0.2s ease all;
+            }
 
-        /* BOTTOM BARS ================================= */
-        .material-input-group .bar {
-            position:relative; display:block; width:300px;
-        }
+            /* active state */
+            .material-input-group input:focus ~ label, .material-input-group input:valid ~ label 		{
+                top:-20px;
+                font-size:14px;
+                color:#5264AE;
+            }
 
-        .material-input-group .bar:before, .bar:after {
-            content:'';
-            height:2px;
-            width:0;
-            bottom:1px;
-            position:absolute;
-            background:#5264AE;
-            transition:0.2s ease all;
-            -moz-transition:0.2s ease all;
-            -webkit-transition:0.2s ease all;
-        }
-        .material-input-group .bar:before {
-            left:50%;
-        }
-        .material-input-group .bar:after {
-            right:50%;
-        }
+            /* BOTTOM BARS ================================= */
+            .material-input-group .bar {
+                position:relative; display:block; width:100%;
+            }
 
-        /* active state */
-        .material-input-group input:focus ~ .bar:before, .material-input-group input:focus ~ .bar:after {
-            width:50%;
-        }
+            .material-input-group .bar:before, .bar:after {
+                content:'';
+                height:2px;
+                width:0;
+                bottom:1px;
+                position:absolute;
+                background:#5264AE;
+                transition:0.2s ease all;
+                -moz-transition:0.2s ease all;
+                -webkit-transition:0.2s ease all;
+            }
+            .material-input-group .bar:before {
+                left:50%;
+            }
+            .material-input-group .bar:after {
+                right:50%;
+            }
 
-        /* HIGHLIGHTER ================================== */
-        .material-input-group .highlight {
-            position:absolute;
-            height:60%;
-            width:100px;
-            top:25%;
-            left:0;
-            pointer-events:none;
-            opacity:0.5;
-        }
+            /* active state */
+            .material-input-group input:focus ~ .bar:before, .material-input-group input:focus ~ .bar:after {
+                width:50%;
+            }
 
-        /* active state */
-        .material-input-group input:focus ~ .highlight {
-            -webkit-animation:inputHighlighter 0.3s ease;
-            -moz-animation:inputHighlighter 0.3s ease;
-            animation:inputHighlighter 0.3s ease;
-        }
+            @keyframes fall {
+                from {
+                    top: -10px;
+                    -webkit-transform: rotate(0);
+                    -moz-transform: rotate(0);
+                    -ms-transform: rotate(0);
+                    -o-transform: rotate(0);
+                    transform: rotate(0);
+                }
+                to {
+                    top: 110vh;
+                    -webkit-transform: rotate(360deg);
+                    -moz-transform: rotate(360deg);
+                    -ms-transform: rotate(360deg);
+                    -o-transform: rotate(360deg);
+                    transform: rotate(360deg);
+                }
+            }
 
-        /* ANIMATIONS ================ */
-        @-webkit-keyframes inputHighlighter {
-            from { background:#5264AE; }
-            to 	{ width:0; background:transparent; }
-        }
-        @-moz-keyframes inputHighlighter {
-            from { background:#5264AE; }
-            to 	{ width:0; background:transparent; }
-        }
-        @keyframes inputHighlighter {
-            from { background:#5264AE; }
-            to 	{ width:0; background:transparent; }
-        }
+            .mui-button {
+                position: relative;
+                padding: 0;
+                margin: 0;
+                width: 150px;
+                height: 50px;
+                border: none;
+                background: rgb(24, 179, 99);
+                color: #FFF;
+                box-shadow: 0 0 10px 0.5px rgba(0, 0, 0, 0);
+                -webkit-transition: all 0.15s linear;
+                -moz-transition: all 0.15s linear;
+                transition: all 0.15s linear;
+                margin: 0 auto;
+                display: block;
+            }
+            .mui-button:hover {
+                box-shadow: 0 0 10px 0.5px rgba(0, 0, 0, 0.2);
+                -webkit-transform: scale(0.98);
+                -moz-transform: scale(0.98);
+                -ms-transform: scale(0.98);
+                -o-transform: scale(0.98);
+                transform: scale(0.98);
+                cursor: pointer;
+            }
+            .mui-button:active, .mui-button:focus {
+                outline: none;
+            }
+            .mui-button .ripple {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+            @keyframes ripple {
+                from {
+                    -webkit-transform: scale(0);
+                    -moz-transform: scale(0);
+                    -ms-transform: scale(0);
+                    -o-transform: scale(0);
+                    transform: scale(0);
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                    -webkit-transform: scale(250);
+                    -moz-transform: scale(250);
+                    -ms-transform: scale(250);
+                    -o-transform: scale(250);
+                    transform: scale(250);
+                }
+            }
+            .mui-button .ripple .circle {
+                position: absolute;
+                background: rgba(251, 232, 211, 0.2);
+                border: 1px solid transparent;
+                border-radius: 50%;
+                pointer-events: none;
+                animation: ripple 0.75s 1;
+                top: 50%;
+                left: 50%;
+            }
+            .mui-button p {
+                z-index: 1;
+                font-size: 18px;
+                margin: 0;
+            }
         </style>
     </head>
     <body onload="onLoad();">
@@ -262,8 +293,7 @@ response.setDateHeader("Expires", -1);
                 <div class="grid_12 row8">
 
                     <div class="material-input-group">
-                        <input type="text" id="Track2CardNo" name="Track2CardNo" maxlength="80" width="100%" dir="ltr" autocomplete="off" onkeyup="limitInput(this,80)" onchange="return validateTrack2CardNo();" disabled />
-                        <span class="highlight"></span>
+                        <input required type="text" id="Track2CardNo" name="Track2CardNo" maxlength="80" width="100%" dir="ltr" autocomplete="off" onkeyup="limitInput(this,80)" onchange="return validateTrack2CardNo();" disabled />
                         <span class="bar"></span>
                         <label><%=CCNumber%>:</label>
                     </div>
@@ -302,9 +332,8 @@ response.setDateHeader("Expires", -1);
                 </div>
                 <div class="grid_12 row10">
 
-                    <div class="material-input-group">
-                        <input type="text" pattern="[0-9]*" name="cvv" id="cvv" maxlength="4" style="width: 50px;" dir="ltr" autocomplete="off" onkeyup="limitInput(this,4)" onchange="return validateCvv();" disabled />
-                        <span class="highlight"></span>
+                    <div class="material-input-group" style="width: 50px;">
+                        <input required type="text" pattern="[0-9]*" name="cvv" id="cvv" maxlength="4" dir="ltr" autocomplete="off" onkeyup="limitInput(this,4)" onchange="return validateCvv();" disabled />
                         <span class="bar"></span>
                         <label>CVV:</label>
                         <img id="qm" src="merchantPages/ResponsiveWebSources/images/qm.png" onmouseover="showHideCVVhelp();" onmouseout="showHideCVVhelp();" style="cursor:pointer;" />
@@ -336,8 +365,7 @@ response.setDateHeader("Expires", -1);
                 <div class="grid_12 row12">
 
                     <div class="material-input-group">
-                        <input type="text" pattern="[0-9]*" id="personalId" name="personalId" maxlength="9" dir="ltr" autocomplete="off" onkeyup="limitInput(this,9)" onchange="return validatePersonalId()" disabled />
-                        <span class="highlight"></span>
+                        <input required type="text" pattern="[0-9]*" id="personalId" name="personalId" maxlength="9" dir="ltr" autocomplete="off" onkeyup="limitInput(this,9)" onchange="return validatePersonalId()" disabled />
                         <span class="bar"></span>
                         <label><%=CCPId%>:</label>
                     </div>
@@ -392,8 +420,12 @@ response.setDateHeader("Expires", -1);
                 </div>
 
                 <div id="form_buttons" class="grid_12 row13 td_style_fieldValue">
-                    <input class="material-button" type="submit" id="submitBtn" value="<%=formSend%>" disabled />
-                    <input class="material-button" id="resetBtn" type="reset" value="<%=formReset%>" onclick="clearFields()" disabled />
+                    <button id="submitBtn" type="submit" class="mui-button">
+                        <div class="ripple"></div>
+                        <p><%=formSend%></p>
+                    </button>
+                    <!--<input class="material-button" type="submit" id="submitBtn" value="<%=formSend%>" disabled />-->
+                    <!--<input class="material-button" id="resetBtn" type="reset" value="<%=formReset%>" onclick="clearFields()" disabled />-->
                     <%=getCancelBtnHTML("")%>
                 </div>
 
@@ -408,9 +440,9 @@ response.setDateHeader("Expires", -1);
                 <p id="loadingMsg" class="loading_invisible" aria-live="polite"></p>
             </div>
             <div class="grid_12 row14" height="100%" style="max-height: 3em;">
-                <img class="row14 pci_image" width="12.1%" src="merchantPages/ResponsiveWebSources/images/pci_slice.gif" alt="pci logo" title="pci logo" />
-                <img class="row14 pci_image" width="16%" src="merchantPages/ResponsiveWebSources/images/mastercard_slice.png" alt="mastercard" title="mastercard" />
-                <img class="row14 pci_image viza_img" width="16%" src="merchantPages/ResponsiveWebSources/images/visa_slice.png" alt="visa" title="visa" />
+                <img class="pci_image" width="12.1%" src="merchantPages/ResponsiveWebSources/images/pci_slice.gif" alt="pci logo" title="pci logo" />
+                <img class="pci_image" width="16%" src="merchantPages/ResponsiveWebSources/images/mastercard_slice.png" alt="mastercard" title="mastercard" />
+                <img class="pci_image viza_img" width="16%" src="merchantPages/ResponsiveWebSources/images/visa_slice.png" alt="visa" title="visa" />
                 <div class="responsive_page_line_break"></div>
                 <!-- GeoTrust True Site [tm] Smart Icon tag. Do not edit. -->
                 <!-- <div class="row14 pci_image" width="16%">

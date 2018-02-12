@@ -1,0 +1,2231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Title</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+
+    <!--<script src="merchantPages/ResponsiveWebSources/js/<%=lang%>.js"></script>-->
+    <script>
+	    var helperMsg = new Array();
+	    helperMsg[0]="פס מגנטי לא תקין";
+	    helperMsg[1]="מספר כרטיס אשראי לא תקין";
+	    helperMsg[2]="יש לספק 3 או 4 ספרות בשדה ספרות ביקורת שבגב הכרטיס";
+	    helperMsg[3]="תעודת זהות אינה תקינה";
+	    helperMsg[4]="תוקף לא תקין";
+	    helperMsg[5]="לא ניתן לבחור מס' תשלומים גדול מסכום העסקה";
+	    helperMsg[6]="מספר כרטיס או פס מגנטי לא תקין"
+
+	    var loadingMsg="מעבד בקשה, אנא המתן..."
+    </script>
+
+    <!--<script src="merchantPages/ResponsiveWebSources/js/main.js"></script>-->
+    <script>
+	    function resetForm(){
+		    document.forms['creditForm'].reset();
+	    }
+
+	    function clearFields()
+	    {
+		    var elems = document.body.getElementsByClassName("td_style_invalidField");
+		    for (var i=0;i<elems.length;i++)
+		    {
+			    elems[i].innerHTML = "&nbsp;";
+		    }
+		    elements = ['Track2CardNo','cvv','personalId','expMonth','expYear','numberOfPayments'];
+		    for (var i in elements){
+			    e = document.getElementsByName(elements[i])[0];
+			    if(e==null)
+				    continue;
+			    e.style.borderColor='';
+
+		    }
+
+		    firstPaymentEl = document.getElementById("firstPaymentDisp");
+		    periodicalPaymentEl = document.getElementById("periodicalPaymentDisp");
+		    numberOfPaymentsEl = document.getElementById('numberOfPayments');
+
+		    if (firstPaymentEl!=null && periodicalPaymentEl!=null && numberOfPaymentsEl!=null)
+		    {
+			    if(firstPaymentEl.tagName.toLowerCase() != "input" || periodicalPaymentEl.tagName.toLowerCase() != "input"){
+				    setTimeout("numberOfPaymentsEl.onchange();", 0);
+			    }
+		    }
+
+	    }
+
+	    function enableElements(elms){
+		    for (var i=0;i<elms.length;i++){
+			    if(elms[i].type!='hidden' && elms[i].disabled == true && elms[i].id!="firstPaymentDisp" && elms[i].id!="periodicalPaymentDisp" && elms[i].id!="paymentsInterestDisp"){
+				    elms[i].disabled=false;
+			    }
+		    }
+	    }
+
+	    function enableForm(){
+		    var inputElms=document.getElementById('creditForm').getElementsByTagName('input');
+		    var selectElms=document.getElementById('creditForm').getElementsByTagName('select');
+		    enableElements(inputElms);
+		    enableElements(selectElms);
+	    }
+
+	    function setFocuse(){
+		    var elms=document.getElementById('creditForm').getElementsByTagName('input');
+		    for (var i=0;i<elms.length;i++){
+			    if(elms[i].type!='hidden'){
+				    elms[i].focus();
+				    return;
+			    }
+		    }
+	    }
+
+	    function onLoad(){
+		    resetForm();
+		    enableForm();
+		    setFocuse();
+	    }
+
+	    function formValidator(version){
+		    if(document.getElementById('submitBtn').disabled==true)
+			    return false;
+		    // Versions:
+		    // 10: check with Israel ID
+
+		    var retalert=true;
+		    var elem,e,val,tempCondition;
+
+		    var elements = ['track2','cardNumber','cvv','personalId','expMonth'];
+
+		    for (var i in elements){
+			    e = document.getElementsByName(elements[i])[0];
+			    if(e==null||e.disabled==true)
+				    continue;
+			    val = e.value;
+			    len = val.length;
+			    if(e.style.display.toLowerCase() != 'none' && e.style.visibility.toLowerCase() != 'hidden' && e.type.toLowerCase() != 'hidden'){
+				    switch (elements[i]){
+					    case 'expMonth':
+						    if(version>=10){
+							    var d = new Date();
+							    var year = (d.getFullYear()+'').substring(2, 4);
+							    var month = d.getMonth()+1;
+							    var selectedMonth = (document.getElementById('expMonth').options[document.getElementById('expMonth').selectedIndex].value)*1;
+							    var selectedYear = document.getElementById('expYear').options[document.getElementById('expYear').selectedIndex].value;
+							    if(selectedYear==year){
+								    if(selectedMonth<month){
+									    e.style.borderColor='red';document.getElementById('expYear').style.borderColor='red';
+									    alert(helperMsg[i]);
+									    e.focus();
+									    return false;
+								    }else{
+									    e.style.borderColor='';document.getElementById('expYear').style.borderColor='';
+								    }
+							    }
+						    }
+						    break;
+					    case 'personalId':
+						    if(version>=10){
+							    tempCondition=(!checkIsraelId(val));
+						    }else{
+							    tempCondition=(len < 7);
+						    }
+						    if(tempCondition){
+							    if(version>=10){e.style.borderColor='red';}
+							    alert(helperMsg[i]);
+							    e.focus();
+							    return false;
+						    }else{
+							    if(version>=10){e.style.borderColor='';}
+						    }
+						    break;
+					    case 'cvv':
+						    if( ((len==0) || (isNaN(val)) || (len < 3) || (len > 4))&&(val!="0"&&val!="2"&&val!="9") ){
+							    if(version>=10){e.style.borderColor='red';}
+							    alert(helperMsg[i]);
+							    e.focus();
+							    return false;
+						    }else{
+							    if(version>=10){e.style.borderColor='';}
+						    }
+						    break;
+					    case 'cardNumber':
+						    if(version>=10){
+							    if(!isValidCC(val)){
+								    if(version>=10){e.style.borderColor='red';}
+								    alert(helperMsg[i]);
+								    e.focus();
+								    return false;
+							    }else{
+								    if(version>=10){e.style.borderColor='';}
+							    }
+						    }else{
+							    if(len < 8 || len > 19 || isNaN(val)){
+								    alert(helperMsg[i]);
+								    e.focus();
+								    return false;
+							    }
+						    }
+						    break;
+					    case 'track2':
+						    if(!checkTrack2(val)){
+							    alert(helperMsg[i]);
+							    e.focus();
+							    if(version>=10){e.style.borderColor='red';}
+							    return false;
+						    }else{
+							    if(version>=10){e.style.borderColor='';}
+						    }
+						    break;
+				    }
+			    }
+		    }
+
+		    document.getElementById('submitBtn').disabled=true;
+		    return true;
+	    }
+	    var elements;
+
+	    function validateForm()
+	    {
+		    elements = ['track2','cardNumber','cvv','personalId','expMonth','numberOfPayments'];
+		    for (var i in elements){
+			    e = document.getElementsByName(elements[i])[0];
+			    if(e==null)
+				    continue;
+			    if(e.style.display.toLowerCase() == 'none' || e.style.visibility.toLowerCase() == 'hidden' || e.type.toLowerCase() == 'hidden'){
+				    var index = elements.indexOf(elements[i]);
+				    elements.splice(index, 1);
+			    }
+		    }
+		    return validateForm_second();
+	    }
+	    function validateForm_second(){
+
+		    if(document.getElementById('submitBtn').disabled==true)
+			    return false;
+
+		    var validForm = true;
+		    for (var i in elements){
+			    e = document.getElementsByName(elements[i])[0];
+			    if(e==null || e.style.display == "none")
+				    continue;
+			    switch (elements[i]){
+				    case 'track2':
+					    if (!validateTrack2())
+					    {
+						    validForm = false;
+					    }
+					    break;
+				    case 'cardNumber':
+					    if (!validateCardNumber())
+					    {
+						    validForm = false;
+					    }
+					    break;
+				    case 'cvv':
+					    if (!validateCvv())
+					    {
+						    validForm = false;
+					    }
+					    break;
+				    case 'expMonth':
+					    if (!validateExpDateOnSubmit())
+					    {
+						    validForm = false;
+					    }
+					    break;
+				    case 'personalId':
+					    if (!validatePersonalId())
+					    {
+						    validForm = false;
+					    }
+					    break;
+				    case 'numberOfPayments':
+					    if(!validateNumberOfPayments())
+					    {
+						    validForm = false;
+					    }
+					    break;
+			    }
+		    }
+
+		    return validForm;
+	    }
+
+	    function validateTrack2()
+	    {
+		    var validField = false;
+		    var e = document.getElementsByName('track2')[0];
+		    val = e.value;
+		    if(!checkTrack2(val)){
+			    e.style.borderColor='red';
+			    msg("invalidTrack2",helperMsg[0]);
+		    }
+		    else
+		    {
+			    validField = true;
+			    e.style.borderColor='';
+			    msg("invalidTrack2","");
+		    }
+		    return validField;
+	    }
+
+	    function validateCardNumber()
+	    {
+		    var validField = false;
+		    var e = document.getElementsByName('cardNumber')[0];
+		    val = e.value;
+		    if(!isValidCC(val)){
+			    e.style.borderColor='red';
+			    msg("invalidCardNumber",helperMsg[1]);
+		    }
+		    else
+		    {
+			    validField = true;
+			    e.style.borderColor='';
+			    msg("invalidCardNumber","");
+		    }
+		    return validField;
+	    }
+	    function validateFormTrack2CardNo()
+	    {
+		    var isValid = validateTrack2CardNo();
+		    isValid = validateForm_second();
+
+		    if(isValid == true)
+		    {
+			    displayImgWorking();
+		    }
+		    return isValid;
+	    }
+	    function validateAndLoadSubmit()
+	    {
+		    var isValid = validateForm();
+
+		    if(isValid == true)
+		    {
+			    displayImgWorking();
+			    document.getElementById('submitBtn').disabled=true;
+		    }
+
+		    return isValid;
+	    }
+	    function displayImgWorking()
+	    {
+		    document.getElementById("loadingMsg").innerHTML = loadingMsg;
+		    document.getElementById("loadingMsg").className = "loading_msg_visible";
+		    document.getElementById("loading").className = "loading_visible";
+	    }
+
+	    /**
+	     * This function ONLY simulate the calculating on server side. Any changes made here wont take effect.
+	     * @param total - Total sum of transaction.
+	     */
+	    function simulateServerPaymentsCalculation(total){
+		    if(validateNumberOfPayments()){
+			    var modolo;
+			    var periodicalPayment;
+			    var firstPayment;
+
+			    var numberOfPayments = document.getElementById("numberOfPayments").value*1+1;
+			    var paymentsInterestElem = document.getElementById("paymentsInterestDisp");
+			    if (paymentsInterestElem != null)
+				    total += parseInt(paymentsInterestElem.innerHTML,10)*100;
+
+			    if(numberOfPayments > 1){
+				    firstPayment = getFirstPaymentToBeSent(total, numberOfPayments);
+				    periodicalPayment = getPeriodicalPaymentToBeSent(total, numberOfPayments, firstPayment);
+			    } else {
+				    firstPayment = (total / 100).toFixed(2);
+				    periodicalPayment = 0;
+			    }
+			    if(document.getElementById("firstPaymentDisp").tagName.toLowerCase() == "input"){
+				    document.getElementById("firstPaymentDisp").value = firstPayment;
+			    } else {
+				    document.getElementById("firstPaymentDisp").innerHTML = firstPayment;
+			    }
+			    if(document.getElementById("periodicalPaymentDisp").tagName.toLowerCase() == "input"){
+				    document.getElementById("periodicalPaymentDisp").value = periodicalPayment;
+			    } else {
+				    document.getElementById("periodicalPaymentDisp").innerHTML = periodicalPayment;
+			    }
+
+		    }
+	    }
+
+	    function getFirstPaymentToBeSent(amount, numberOfPayments) {
+		    result = "";
+		    firstPayment = amount;
+		    if(numberOfPayments > 0)
+		    {
+			    modolo   = round(((amount/100) % numberOfPayments), 2);
+			    firstPayment = Math.round(((amount/100)-modolo)/numberOfPayments) + modolo;
+		    }
+		    //result = String.format("%1$.0f", firstPayment);
+		    result = firstPayment.toFixed(2);
+		    return result;
+	    }
+
+	    function getPeriodicalPaymentToBeSent(amount, numberOfPayments, firstPaymentValue) {
+		    result = "";
+		    periodicalPayment = Math.round(((amount/100) - firstPaymentValue) / (numberOfPayments - 1));
+		    //result = String.format("%1$.0f", periodicalPayment);
+		    result = periodicalPayment.toFixed(2);
+		    return result;
+	    }
+
+	    function simulatePaymentsInterest(total, isDetailedPayments) {
+		    result = "";
+		    var paymentsInterestElem = document.getElementById("paymentsInterestDisp");
+		    var numberOfPayments = document.getElementById("numberOfPayments").value*1;
+		    if(isDetailedPayments)
+			    numberOfPayments ++;
+
+		    if (paymentsInterestElem != null)
+		    {
+			    var listNumberOfPayments = (document.getElementById("listNumberOfPaymentsValues").value).split(" ");
+			    var listPaymentsInteres = (document.getElementById("listPaymentsInterestValues").value).split(" ");
+
+			    var index = listNumberOfPayments.indexOf(numberOfPayments.toString());
+			    if (index == -1)
+			    {
+				    for (var i=0; i< listNumberOfPayments.length;i++)
+				    {
+					    if (listNumberOfPayments[i].indexOf("-") > -1)
+					    {
+						    var paymentsRange = listNumberOfPayments[i].split("-");
+						    if (numberOfPayments >= paymentsRange[0] && numberOfPayments <= paymentsRange[1])
+						    {
+							    index =i;
+							    break;
+						    }
+					    }
+				    }
+
+				    if (index == -1)
+				    {
+					    index = 0;
+				    }
+
+			    }
+			    result = listPaymentsInteres[index]/100;
+			    var paymentsInterest = result.toFixed(2);
+
+			    if(document.getElementById("paymentsInterestDisp").tagName.toLowerCase() == "input"){
+				    document.getElementById("paymentsInterestDisp").value  = paymentsInterest;
+			    } else {
+				    document.getElementById("paymentsInterestDisp").innerHTML = paymentsInterest;
+			    }
+			    total += paymentsInterest * 100;
+			    document.getElementById("amount").innerHTML = (total / 100).toFixed(2);
+		    }
+	    }
+
+
+	    function round(value,places) {
+		    //if (places < 0) throw new IllegalArgumentException();
+
+		    factor = Math.pow(10, places);
+		    value = value * factor;
+		    tmp = Math.round(value);
+		    return tmp / factor;
+	    }
+
+	    function validateExpDateOnChange()
+	    {
+		    var selectedMonth = (document.getElementById('expMonth').options[document.getElementById('expMonth').selectedIndex].value)*1;
+		    var selectedYear = document.getElementById('expYear').options[document.getElementById('expYear').selectedIndex].value;
+		    if (isNaN(selectedMonth) || isNaN(selectedYear) || selectedYear=="" || selectedMonth=="")
+		    {
+			    validField = true;
+			    document.getElementById('expMonth').style.borderColor='';
+			    document.getElementById('expYear').style.borderColor='';
+			    msg("invalidCardExp","");
+		    }
+		    else
+		    {
+			    return validateExpDate()
+		    }
+	    }
+
+	    function validateExpDateOnSubmit()
+	    {
+		    var selectedMonth = (document.getElementById('expMonth').options[document.getElementById('expMonth').selectedIndex].value)*1;
+		    var selectedYear = document.getElementById('expYear').options[document.getElementById('expYear').selectedIndex].value;
+		    if (isNaN(selectedMonth) || isNaN(selectedYear) || selectedYear=="" || selectedMonth=="")
+		    {
+			    document.getElementById('expMonth').style.borderColor='red';
+			    document.getElementById('expYear').style.borderColor='red';
+			    msg("invalidCardExp",helperMsg[4]);
+		    }
+		    else
+		    {
+			    return validateExpDate()
+		    }
+	    }
+
+	    function validateExpDate()
+	    {
+		    var validField = false;
+		    var d = new Date();
+		    var year = (d.getFullYear()+'').substring(2, 4);
+		    var month = d.getMonth()+1;
+		    var selectedMonth = (document.getElementById('expMonth').options[document.getElementById('expMonth').selectedIndex].value)*1;
+		    var selectedYear = document.getElementById('expYear').options[document.getElementById('expYear').selectedIndex].value;
+		    if(selectedYear==year){
+			    if(selectedMonth<month){
+				    document.getElementById('expMonth').style.borderColor='red';
+				    document.getElementById('expYear').style.borderColor='red';
+				    msg("invalidCardExp",helperMsg[4]);
+			    }
+			    else
+			    {
+				    validField = true;
+				    document.getElementById('expMonth').style.borderColor='';
+				    document.getElementById('expYear').style.borderColor='';
+				    msg("invalidCardExp","");
+			    }
+		    }
+		    else
+		    {
+			    validField = true;
+			    document.getElementById('expMonth').style.borderColor='';
+			    document.getElementById('expYear').style.borderColor='';
+			    msg("invalidCardExp","");
+		    }
+		    return validField;
+	    }
+
+	    function validateCvv()
+	    {
+		    var validField = false;
+		    var e = document.getElementsByName('cvv')[0];
+		    val = e.value;
+		    len = val.length;
+		    if( ((len==0) || (isNaN(val)) || (len < 3) || (len > 4))&&(val!="0"&&val!="2"&&val!="9") ){
+			    e.style.borderColor='red';
+			    msg("invalidCvv",helperMsg[2]);
+		    }
+		    else
+		    {
+			    validField = true;
+			    e.style.borderColor='';
+			    msg("invalidCvv","");
+		    }
+		    return validField;
+	    }
+
+	    function validatePersonalId()
+	    {
+		    var validField = false;
+		    var e = document.getElementsByName('personalId')[0];
+		    val = e.value;
+		    len = val.length;
+		    if (!checkIsraelId(val))
+		    {
+			    e.style.borderColor='red';
+			    msg("invalidPersonalId",helperMsg[3]);
+		    }
+		    else
+		    {
+			    validField = true;
+			    e.style.borderColor='';
+			    msg("invalidPersonalId","");
+		    }
+		    return validField;
+	    }
+
+	    function validateNumberOfPayments(){
+		    var validField = false;
+		    var e = document.getElementById('numberOfPayments');
+		    var el = document.getElementById('divPayments');
+		    var displayPayment = false;
+
+		    if (el!= undefined || el != null){
+			    if (el.style.display == "block"){
+				    displayPayment = true;
+			    }
+		    }
+		    else if (e != undefined || e != null)
+		    {
+			    displayPayment = true;
+		    }
+
+		    if (displayPayment){
+			    validField = e.options[e.selectedIndex].value*1+1 <= document.getElementById("amount").innerHTML*1;
+			    if(validField){
+				    e.style.borderColor='';
+				    msg('invalidNumberOfPayments', '');
+			    } else {
+				    e.style.borderColor='red';
+				    msg("invalidNumberOfPayments",helperMsg[5]);
+			    }
+		    }
+
+		    return validField;
+	    }
+
+	    function checkTrack2(num){
+		    var patt1 = /[0-9]*=[0-9]*(\*[0-9A-Z]{36,38}\*)?/;
+		    if(num.match(patt1) == null)
+			    return false;
+		    else if (num.match(patt1)[0]!=num)
+			    document.getElementById('Track2CardNo').value = patt1.exec(num)[0];
+		    return true;
+	    }
+	    function checkIsraelId(idnum){
+		    if((idnum=='')||(idnum==null)){
+			    return false;
+		    }
+		    while (idnum.length<9){
+			    idnum="0"+idnum;
+		    }
+		    idnum1=idnum.substr(0,1)*1;
+		    idnum2=idnum.substr(1,1)*2;
+		    idnum3=idnum.substr(2,1)*1;
+		    idnum4=idnum.substr(3,1)*2;
+		    idnum5=idnum.substr(4,1)*1;
+		    idnum6=idnum.substr(5,1)*2;
+		    idnum7=idnum.substr(6,1)*1;
+		    idnum8=idnum.substr(7,1)*2;
+		    idnum9=idnum.substr(8,1)*1;
+
+		    if (idnum1>9) idnum1=(idnum1%10)+1
+		    if (idnum2>9) idnum2=(idnum2%10)+1
+		    if (idnum3>9) idnum3=(idnum3%10)+1
+		    if (idnum4>9) idnum4=(idnum4%10)+1
+		    if (idnum5>9) idnum5=(idnum5%10)+1
+		    if (idnum6>9) idnum6=(idnum6%10)+1
+		    if (idnum7>9) idnum7=(idnum7%10)+1
+		    if (idnum8>9) idnum8=(idnum8%10)+1
+		    if (idnum9>9) idnum9=(idnum9%10)+1
+
+		    var sumval=idnum1+idnum2+idnum3+idnum4+idnum5+idnum6+idnum7+idnum8+idnum9;
+
+		    sumval=sumval%10
+		    if (isNaN(sumval) || sumval>0){
+			    return false;
+		    }
+
+		    return true;
+	    }
+	    function showHideCVVhelp(){
+		    if(document.getElementById('CVVhelp').style.display=='none')
+			    document.getElementById('CVVhelp').style.display='';
+		    else
+			    document.getElementById('CVVhelp').style.display='none';
+	    }
+	    function isracardCheck(identifier){
+
+		    if (identifier.length != 8 && identifier.length != 9){
+			    return false;
+		    }else{
+			    if (identifier.length == 8){
+				    identifier='0'+identifier;
+			    }
+		    }
+
+		    var sum     = 0,
+			    alt     = false,
+			    i       = identifier.length-1,
+			    mahpil	= 1,
+			    num;
+
+
+		    while (i >= 0){
+			    //get the next digit
+			    num = parseInt(identifier.charAt(i), 10);
+
+			    //if it's not a valid number, abort
+			    if (isNaN(num)){
+				    return false;
+			    }
+
+			    //add to the rest of the sum
+			    sum += num*mahpil;
+
+			    //go to next digit
+			    mahpil++;
+			    i--;
+		    }
+
+
+		    //determine if it's valid
+		    return (sum % 11 == 0);
+	    }
+
+	    //Luhn algorithm identifier verification
+	    function isValidCC(identifier) {
+
+		    if (identifier.length == 8 || identifier.length == 9){
+			    return isracardCheck(identifier);
+		    }
+
+		    if (identifier.charAt(0)=='1'&&identifier.charAt(1)=='0'&&(identifier.length==16||identifier.length==32))
+			    return true;
+
+		    var sum     = 0,
+			    alt     = false,
+			    i       = identifier.length-1,
+			    num;
+
+		    if (identifier.length < 10 || identifier.length > 19){
+			    return false;
+		    }
+
+		    while (i >= 0){
+
+			    //get the next digit
+			    num = parseInt(identifier.charAt(i), 10);
+
+			    //if it's not a valid number, abort
+			    if (isNaN(num)){
+				    return false;
+			    }
+
+			    //if it's an alternate number...
+			    if (alt) {
+				    num *= 2;
+				    if (num > 9){
+					    num = (num % 10) + 1;
+				    }
+			    }
+
+			    //flip the alternate bit
+			    alt = !alt;
+
+			    //add to the rest of the sum
+			    sum += num;
+
+			    //go to next digit
+			    i--;
+		    }
+
+		    //determine if it's valid
+		    return (sum % 10 == 0);
+	    }
+
+	    function msg(fld, message)
+	    {
+		    var elem = document.getElementById(fld);
+		    elem.firstChild.nodeValue = message;
+	    }
+
+	    function cvv_wneb_changed(){
+		    var cvv_wneb = document.getElementsByName('cvv_wneb')[0];
+		    var cvv = document.getElementsByName('cvv')[0];
+		    if(cvv==null||cvv_wneb==null)
+			    return;
+		    if(cvv_wneb.value=='')
+		    //cvv.disabled='';
+			    cvv.readOnly = false;
+		    else{
+			    //cvv.disabled='disabled';
+			    cvv.readOnly = true;
+		    }
+		    cvv.value=cvv_wneb.value;
+	    }
+	    /*support Track2CardNo */
+	    function onClear(){
+		    //convertType(document.getElementById('Track2CardNo'),'text');
+		    msg("invalidCardNumber","");
+		    msg("invalidTrack2","");
+		    //setFocuse();
+		    document.getElementById('Track2CardNo').focus;
+	    }
+	    function validateTrack2CardNo()
+	    {
+		    helperMsg[0]=helperMsg[6];
+		    helperMsg[1]=helperMsg[6];
+		    msg("invalidCardNumber","");
+		    msg("invalidTrack2","");
+		    document.getElementById('Track2CardNo').style.borderColor='';
+		    if(checkTrack2(document.getElementById('Track2CardNo').value))
+		    {
+			    document.getElementById('track2').value= document.getElementById('Track2CardNo').value;
+			    //convertType(document.getElementById('Track2CardNo'),'pass');
+			    emptyCardNoData();
+			    emptyExpDateData();
+			    elements = ['track2','numberOfPayments'];
+			    return validateTrack2();
+		    }
+		    else{
+			    if(isValidCC(document.getElementById('Track2CardNo').value)){
+				    document.getElementById('cardNumber').value= document.getElementById('Track2CardNo').value;
+				    emptyTrack2Data();
+				    elements = ['cardNumber','cvv','personalId','expMonth','numberOfPayments'];
+				    return validateCardNumber();
+			    }
+			    else{
+				    document.getElementById('cardNumber').value=""
+				    document.getElementById('track2').value=""
+				    elements = ['cardNumber','cvv','personalId','expMonth','numberOfPayments'];
+				    document.getElementById('Track2CardNo').style.borderColor='red';
+				    return validateCardNumber();
+			    }
+		    }
+	    }
+	    function convertType(elem,type)
+	    {
+		    var input = document.createElement('input');
+		    input.id = elem.id;
+		    input.value = elem.value;
+		    input.onfocus = elem.onfocus;
+		    input.onblur = elem.onblur;
+		    input.className = elem.className;
+		    input.setAttribute("onchange","return validateTrack2CardNo();");
+		    input.tabIndex=elem.tabIndex;
+		    input.name=elem.name;
+		    input.maxLength=elem.maxLength;
+		    if (type == 'pass' )
+		    { input.type = 'password'; }
+		    else
+		    { input.type = 'text'; }
+
+		    elem.parentNode.replaceChild(input, elem);
+		    return input;
+	    }
+
+	    function emptyCardNoData()
+	    {
+		    document.getElementById('cardNumber').value="";
+	    }
+	    function emptyTrack2Data()
+	    {
+		    document.getElementById('track2').value="";
+	    }
+	    function emptyExpDateData()
+	    {
+		    document.getElementById('expMonth').value="";
+		    document.getElementById('expYear').value="";
+	    }
+	    function limitInput(element,max_chars)
+	    {
+		    if(element.value.length > max_chars) {
+			    element.value = element.value.substr(0, max_chars);
+		    }
+	    }
+	    function doPayPalSetup(txId) {
+		    if (txId != null) {
+			    displayImgWorking();
+			    location='AdditionalPaymentMethodSetup?txId=' + txId + '&' + 'apm=pp';
+		    }
+	    }
+    </script>
+
+    <!--<script src="merchantPages/ResponsiveWebSources/js/mainMP.js"></script>-->
+    <script>
+	    function checkoutMasterPass(txid, masterPassToken, checkoutId, serverUrl)
+	    {
+		    MasterPass.client.checkout({
+			    "requestToken":masterPassToken,
+			    "callbackUrl":serverUrl + "/CGMPI_Server/ProcessMasterPass?txId=" + txid,
+			    "merchantCheckoutId":checkoutId,
+			    "failureCallback":handleCallbackFailure,
+			    "cancelCallback":handleCallbackCancel,
+			    "successCallback":handleCallbackSuccess,
+			    "allowedCardTypes":["master,amex,diners,discover,maestro,visa"],
+			    "version":"v6"
+		    });
+	    }
+	    function handleCallbackFailure() {
+		    document.getElementById('masterPassForm').action=document.getElementById('masterPassForm').action+"&mpstatus=failure";
+		    document.getElementById('masterPassForm').submit();
+	    }
+	    function handleCallbackCancel() {
+		    var actionForm = document.getElementById('masterPassForm').action;
+		    actionForm = actionForm.replace("ProcessMasterPass", "CancelProcess");
+		    document.getElementById('masterPassForm').action = actionForm;
+		    document.getElementById('masterPassForm').submit();
+	    }
+	    function handleCallbackSuccess(data) {
+		    checkoutResourceUrl=data.checkout_resource_url;
+		    startIndex = checkoutResourceUrl.lastIndexOf('/')+1;
+		    endIndex = checkoutResourceUrl.indexOf('?') != -1 ? checkoutResourceUrl.indexOf('?') : checkoutResourceUrl.length;
+		    checkoutId = checkoutResourceUrl.substring(startIndex, endIndex);
+		    document.getElementById('masterPassForm').action=document.getElementById('masterPassForm').action+"&oauth_token="+data.oauth_token+"&oauth_verifier="+data.oauth_verifier+"&checkoutId="+checkoutId+"&mpstatus=success";
+		    document.getElementById('masterPassForm').submit();
+	    }
+	    function getMasterPassButton(redirect) {
+		    $.ajax({
+			    url: redirect+"&callback=?",
+			    type: 'GET',
+			    dataType : 'html',
+			    crossDomain: true,
+			    contentType:'application/x-www-form-urlencoded; charset=utf-8',
+			    success: function (data) {
+				    $('#form_buttons').html(data);
+			    },
+			    error: function (xhr, status) {
+				    alert('Sorry, there was a problem!');
+			    },
+		    });
+	    }
+
+    </script>
+
+    <!--<link href="merchantPages/ResponsiveWebSources/css/normalize.css" rel="stylesheet" type="text/css" />-->
+    <style>
+        /*! normalize.css 2012-03-11T12:53 UTC - http://github.com/necolas/normalize.css */
+
+        /* =============================================================================
+           HTML5 display definitions
+           ========================================================================== */
+
+        /*
+         * Corrects block display not defined in IE6/7/8/9 & FF3
+         */
+
+        article,
+        aside,
+        details,
+        figcaption,
+        figure,
+        footer,
+        header,
+        hgroup,
+        nav,
+        section,
+        summary {
+            display: block;
+        }
+
+        /*
+         * Corrects inline-block display not defined in IE6/7/8/9 & FF3
+         */
+
+        audio,
+        canvas,
+        video {
+            display: inline-block;
+            *display: inline;
+            *zoom: 1;
+        }
+
+        /*
+         * Prevents modern browsers from displaying 'audio' without controls
+         * Remove excess height in iOS5 devices
+         */
+
+        audio:not([controls]) {
+            display: none;
+            height: 0;
+        }
+
+        /*
+         * Addresses styling for 'hidden' attribute not present in IE7/8/9, FF3, S4
+         * Known issue: no IE6 support
+         */
+
+        [hidden] {
+            display: none;
+        }
+
+
+        /* =============================================================================
+           Base
+           ========================================================================== */
+
+        /*
+         * 1. Corrects text resizing oddly in IE6/7 when body font-size is set using em units
+         *    http://clagnut.com/blog/348/#c790
+         * 2. Prevents iOS text size adjust after orientation change, without disabling user zoom
+         *    www.456bereastreet.com/archive/201012/controlling_text_size_in_safari_for_ios_without_disabling_user_zoom/
+         */
+
+        html {
+            font-size: 100%; /* 1 */
+            -webkit-text-size-adjust: 100%; /* 2 */
+            -ms-text-size-adjust: 100%; /* 2 */
+        }
+
+        /*
+         * Addresses font-family inconsistency between 'textarea' and other form elements.
+         */
+
+        html,
+        button,
+        input,
+        select,
+        textarea {
+            font-family: sans-serif;
+        }
+
+        /*
+         * Addresses margins handled incorrectly in IE6/7
+         */
+
+        body {
+            margin: 0;
+        }
+
+
+        /* =============================================================================
+           Links
+           ========================================================================== */
+
+        /*
+         * Addresses outline displayed oddly in Chrome
+         */
+
+        a:focus {
+            outline: thin dotted;
+        }
+
+        /*
+         * Improves readability when focused and also mouse hovered in all browsers
+         * people.opera.com/patrickl/experiments/keyboard/test
+         */
+
+        a:hover,
+        a:active {
+            outline: 0;
+        }
+
+
+        /* =============================================================================
+           Typography
+           ========================================================================== */
+
+        /*
+         * Addresses font sizes and margins set differently in IE6/7
+         * Addresses font sizes within 'section' and 'article' in FF4+, Chrome, S5
+         */
+
+        h1 {
+            font-size: 1.875em;
+            margin: 1em 0;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin: 0;
+        }
+
+        h3 {
+            font-size: 1em;
+            margin: 1em 0 0 0;
+        }
+
+        h4 {
+            font-size: 1em;
+            margin: 1.33em 0;
+        }
+
+        h5 {
+            font-size: 0.83em;
+            margin: 1.67em 0;
+        }
+
+        h6 {
+            font-size: 0.75em;
+            margin: 2.33em 0;
+        }
+
+        /*
+         * Addresses styling not present in IE7/8/9, S5, Chrome
+         */
+
+        abbr[title] {
+            border-bottom: 1px dotted;
+        }
+
+        /*
+         * Addresses style set to 'bolder' in FF3+, S4/5, Chrome
+        */
+
+        b,
+        strong {
+            font-weight: bold;
+        }
+
+        blockquote {
+            margin: 1em 40px;
+        }
+
+        /*
+         * Addresses styling not present in S5, Chrome
+         */
+
+        dfn {
+            font-style: italic;
+        }
+
+        /*
+         * Addresses styling not present in IE6/7/8/9
+         */
+
+        mark {
+            background: #ff0;
+            color: #000;
+        }
+
+        /*
+         * Addresses margins set differently in IE6/7
+         */
+
+        p,
+        pre {
+            margin: 1em 0;
+        }
+
+        /*
+         * Corrects font family set oddly in IE6, S4/5, Chrome
+         * en.wikipedia.org/wiki/User:Davidgothberg/Test59
+         */
+
+        pre,
+        code,
+        kbd,
+        samp {
+            font-family: monospace, serif;
+            _font-family: 'courier new', monospace;
+            font-size: 1em;
+        }
+
+        /*
+         * Improves readability of pre-formatted text in all browsers
+         */
+
+        pre {
+            white-space: pre;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /*
+         * 1. Addresses CSS quotes not supported in IE6/7
+         * 2. Addresses quote property not supported in S4
+         */
+
+        /* 1 */
+
+        q {
+            quotes: none;
+        }
+
+        /* 2 */
+
+        q:before,
+        q:after {
+            content: '';
+            content: none;
+        }
+
+        small {
+            font-size: 75%;
+        }
+
+        /*
+         * Prevents sub and sup affecting line-height in all browsers
+         * gist.github.com/413930
+         */
+
+        sub,
+        sup {
+            font-size: 75%;
+            line-height: 0;
+            position: relative;
+            vertical-align: baseline;
+        }
+
+        sup {
+            top: -0.5em;
+        }
+
+        sub {
+            bottom: -0.25em;
+        }
+
+
+        /* =============================================================================
+           Lists
+           ========================================================================== */
+
+        /*
+         * Addresses margins set differently in IE6/7
+         */
+
+        dl,
+        menu,
+        ol,
+        ul {
+            margin: 1em 0;
+        }
+
+        dd {
+            margin: 0 0 0 40px;
+        }
+
+        /*
+         * Addresses paddings set differently in IE6/7
+         */
+
+        menu,
+        ol,
+        ul {
+            padding: 0 0 0 40px;
+        }
+
+        /*
+         * Corrects list images handled incorrectly in IE7
+         */
+
+        nav ul,
+        nav ol {
+            list-style: none;
+            list-style-image: none;
+        }
+
+
+        /* =============================================================================
+           Embedded content
+           ========================================================================== */
+
+        /*
+         * 1. Removes border when inside 'a' element in IE6/7/8/9, FF3
+         * 2. Improves image quality when scaled in IE7
+         *    code.flickr.com/blog/2008/11/12/on-ui-quality-the-little-things-client-side-image-resizing/
+         */
+
+        img {
+            border: 0; /* 1 */
+            -ms-interpolation-mode: bicubic; /* 2 */
+        }
+
+        /*
+         * Corrects overflow displayed oddly in IE9
+         */
+
+        svg:not(:root) {
+            overflow: hidden;
+        }
+
+
+        /* =============================================================================
+           Figures
+           ========================================================================== */
+
+        /*
+         * Addresses margin not present in IE6/7/8/9, S5, O11
+         */
+
+        figure {
+            margin: 0;
+        }
+
+
+        /* =============================================================================
+           Forms
+           ========================================================================== */
+
+        /*
+         * Corrects margin displayed oddly in IE6/7
+         */
+
+        form {
+            margin: 0;
+        }
+
+        /*
+         * Define consistent border, margin, and padding
+         */
+
+        fieldset {
+            border: 1px solid #c0c0c0;
+            margin: 0 2px;
+            padding: 0.35em 0.625em 0.75em;
+        }
+
+        /*
+         * 1. Corrects color not being inherited in IE6/7/8/9
+         * 2. Corrects text not wrapping in FF3
+         * 3. Corrects alignment displayed oddly in IE6/7
+         */
+
+        legend {
+            border: 0; /* 1 */
+            padding: 0;
+            white-space: normal; /* 2 */
+            *margin-left: -7px; /* 3 */
+        }
+
+        /*
+         * 1. Corrects font size not being inherited in all browsers
+         * 2. Addresses margins set differently in IE6/7, FF3+, S5, Chrome
+         * 3. Improves appearance and consistency in all browsers
+         */
+
+        button,
+        input,
+        select,
+        textarea {
+            font-size: 100%; /* 1 */
+            margin: 0; /* 2 */
+            vertical-align: baseline; /* 3 */
+            *vertical-align: middle; /* 3 */
+        }
+
+        /*
+         * Addresses FF3/4 setting line-height on 'input' using !important in the UA stylesheet
+         */
+
+        button,
+        input {
+            line-height: normal; /* 1 */
+        }
+
+        /*
+         * 1. Improves usability and consistency of cursor style between image-type 'input' and others
+         * 2. Corrects inability to style clickable 'input' types in iOS
+         * 3. Removes inner spacing in IE7 without affecting normal text inputs
+         *    Known issue: inner spacing remains in IE6
+         */
+
+        button,
+        input[type="button"],
+        input[type="reset"],
+        input[type="submit"] {
+            cursor: pointer; /* 1 */
+            -webkit-appearance: button; /* 2 */
+            *overflow: visible;  /* 3 */
+        }
+
+        /*
+         * Re-set default cursor for disabled elements
+         */
+
+        button[disabled],
+        input[disabled] {
+            cursor: default;
+        }
+
+        /*
+         * 1. Addresses box sizing set to content-box in IE8/9
+         * 2. Removes excess padding in IE8/9
+         * 3. Removes excess padding in IE7
+              Known issue: excess padding remains in IE6
+         */
+
+        input[type="checkbox"],
+        input[type="radio"] {
+            box-sizing: border-box; /* 1 */
+            padding: 0; /* 2 */
+            *height: 13px; /* 3 */
+            *width: 13px; /* 3 */
+        }
+
+        /*
+         * 1. Addresses appearance set to searchfield in S5, Chrome
+         * 2. Addresses box-sizing set to border-box in S5, Chrome (include -moz to future-proof)
+         */
+
+        input[type="search"] {
+            -webkit-appearance: textfield; /* 1 */
+            -moz-box-sizing: content-box;
+            -webkit-box-sizing: content-box; /* 2 */
+            box-sizing: content-box;
+        }
+
+        /*
+         * Removes inner padding and search cancel button in S5, Chrome on OS X
+         */
+
+        input[type="search"]::-webkit-search-decoration,
+        input[type="search"]::-webkit-search-cancel-button {
+            -webkit-appearance: none;
+        }
+
+        /*
+         * Removes inner padding and border in FF3+
+         * www.sitepen.com/blog/2008/05/14/the-devils-in-the-details-fixing-dojos-toolbar-buttons/
+         */
+
+        button::-moz-focus-inner,
+        input::-moz-focus-inner {
+            border: 0;
+            padding: 0;
+        }
+
+        /*
+         * 1. Removes default vertical scrollbar in IE6/7/8/9
+         * 2. Improves readability and alignment in all browsers
+         */
+
+        textarea {
+            overflow: auto; /* 1 */
+            vertical-align: top; /* 2 */
+        }
+
+
+        /* =============================================================================
+           Tables
+           ========================================================================== */
+
+        /*
+         * Remove most spacing between table cells
+         */
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+    </style>
+
+    <!--<link href="merchantPages/ResponsiveWebSources/css/grid.css" rel="stylesheet" type="text/css" />-->
+    <style>
+        /*
+ Width: 1000px
+ # Columns : 12
+ Column width: 65px
+ Gutter : 20px
+
+ */
+        .grid_1 { width: 6.5%; } /* 65px/1000px = 0.065px */
+        .grid_2 { width: 13%; } /* 150px/1000px =  0.15px */
+        .grid_3 { width: 23.5%; } /* 235px/1000px = 0.235px */
+        .grid_4 { width: 32%; } /* 320px/1000px = 0.32px */
+        .grid_5 { width: 40.5%; } /* 405px/1000px = 0.405px */
+        .grid_6 { width: 49%; } /* 490px/1000px = 0.49px */
+        .grid_7 { width: 57.5%; } /* 575px/1000px = 0.575px */
+        .grid_8 { width: 66%; } /* 660px/1000px = 0.66px */
+        .grid_9 { width: 74.5%; } /* 745px/1000px = 0.745px */
+        .grid_10 { width: 83%; } /* 830px/1000px = 0.83px */
+        .grid_11 { width: 91.5%; } /* 915px/1000px = 0.915px */
+        .grid_12 { width: 100%; } /* 1000px/1000px = 1 */
+
+
+        .container{
+            /*width: 90%; width: 1000px;*/
+            float: right;
+            max-width: 550px;
+            padding: 1em;
+            background-color: #FFFFFF;
+
+        }
+
+
+    </style>
+
+    <!--<link href="merchantPages/ResponsiveWebSources/css/responsive.main.rtl.css" rel="stylesheet" type="text/css" />-->
+    <style>
+
+        body{
+            background-color: white;
+            direction: rtl;
+            font-family: Arial;
+        }
+
+        .row1{
+            line-height: 4;
+        }
+
+        .row1,
+        .row2,
+        .row3,
+        .row4,
+        .row5,
+        .row6,
+        .row7,
+        .row8,
+        .row9,
+        .row10,
+        .row11,
+        .row12,
+        .row14,
+        .rowPayments,
+        .rowUserDataListData,
+        .responsive_page_line_break{
+            /* float by Language Direction (RTL: right, LTR: left; */
+            float: right;
+            text-align: right;
+        }
+
+        .row11{
+            margin-bottom: 0.3625em;
+        }
+
+        /*
+        .row8{
+            padding-top: 0.2em;
+            padding-left: 0.2em;
+            padding-right: 0.2em;
+            margin-bottom: 0.4em;
+            border-radius: 5px;
+            background: #e0e0e0;
+        }
+        */
+
+        .rowPayPal,
+        .rowButtons{
+            padding: 5px;
+            float: right;
+        }
+
+        .rowPayPal{
+            margin-top: 14px;
+        }
+        a[href] {
+            display:block;
+            float: right;
+        }
+        .MasterPassTitle{
+            margin: 0;
+        }
+
+        .AboutMasterPass{
+            text-decoration: underline;
+            margin: 10px 5px;
+            padding-left: 5px;
+            border-left: 2px solid #D3D3D3;
+        }
+
+        .row13{
+            /* float by Language Direction (RTL: right, LTR: left; */
+            float: right;
+            text-align: right;
+            padding: 0.7em 0em;
+        }
+
+        .logo {
+            /* float by Language Direction (RTL: left, LTR: right; */
+            background: url(../images/Logo.gif) no-repeat;
+            background-size: 100%;
+            display: inline;
+            min-width: 11em;
+        }
+
+        .page_desc{
+            font-style: italic;
+            font-size: 0.775em;
+            margin-top: 0.3125em;
+        }
+
+        .sep{
+            height: 0.0825em;
+            background-color: #D3D3D3;
+            margin: 0 0.3125em 0 0;
+            width : 100%;
+        }
+
+        .td_style_1,
+        .page_title{
+            padding-top: 0.625em;
+            font-size: 0.875em;
+            font-weight: bold;
+        }
+
+        .td_style_fieldName,
+        .td_style_fieldValue,
+        .td_style_fieldPayments{
+            font-size: 0.775em;
+        }
+
+        .td_style_fieldName,
+        .td_style_fieldPayments{
+            width: 8.2em;
+        }
+
+        .td_style_fieldValue{
+            font-weight: normal;
+        }
+
+        .data_style_payment{
+            width: 5em;
+            margin-bottom: 0.3625em;
+        }
+
+        .td_style_invalidField,
+        .invalid_field_place_holder{
+            font-size: 0.5625em;
+            display: inline;
+            visibility: visible;
+        }
+
+        .td_style_invalidField{
+            font-weight: bold;
+            color: red;
+            text-align: right;
+            width: 14.55em;
+        }
+
+        .invalid_field_place_holder{
+            width: 11.3em;
+        }
+
+        input{
+            text-align: left;
+            margin-right: 0em;
+            margin-left: 0.5em
+            display: inline;
+        }
+
+        select{
+            text-align: left;
+        }
+
+        input[type="text"],
+        input[type="submit"],
+        input[type="reset"],
+        input[type="number"],
+        select,
+        .pci_image,
+        #cancelBtn {
+            border: 1;
+            border-radius: 8px;
+            border-width: 0.1625em;
+            border-style: solid;
+            border-color: #D3D3D3;
+        }
+        .viza_img{
+            padding: 14px 0;
+        }
+        input[type="reset"],
+        #cancelBtn,
+        input[type="submit"]{
+            background-color: #093f69;
+            color: white;
+        }
+
+
+        img{
+            border: 0;
+            padding: 0;
+            margin: 0;
+        }
+
+        .pci_image {
+            margin: 0.0925em;
+        }
+
+        #qm {
+            vertical-align: middle;
+            padding-bottom: 0.2em;
+        }
+
+        .responsive_page_line_break {
+            line-height: 0;
+            width: 0;
+            padding: 0;
+            margin: 0;
+        }
+
+        #form_buttons input{
+            text-align: center;
+        }
+
+        .progress_image {
+            padding-left:0.3125em; /* 5px; */
+            padding-top:0.3125em; /* 5px; */
+        }
+
+        .loading_invisible{
+            display:none;
+        }
+
+        .loading_visible{
+            display:block;
+            position:absolute;
+            top:0px;
+            left:0px;
+            height: 100%;
+            width: 100%;
+            text-align:center;
+
+            background:#808080;
+            filter: alpha(opacity=50);
+            -khtml-opacity: 0.5;
+            -moz-opacity: 0.5;
+            opacity: 0.5;
+            border-top:0.0625em solid #ddd; /* 1px; */
+            border-bottom:0.0625em solid #ddd; /* 1px; */
+        }
+
+        .loading_msg_visible{
+            padding-right: 3em; /* 48px */
+            height: 3em; /* 48px */
+            /*margin-top: 32.5625em; 521px */
+            margin-top: 15em;
+            font-size: 1.25em; /* 18px */
+            font-weight: bold;
+            line-height: 2.8125em; /* 45px */
+            color: #FF0000;
+            opacity: 1.0;
+        }
+
+        @media screen and (max-width: 590px ) {
+
+            .page_title,
+            .page_desc,
+            #qm {
+                display: none;
+            }
+
+            .responsive_page_line_break {
+                width: 100%;
+            }
+            /*
+                .pci_image > a > img {
+                    height: inherit;
+                    width: 16%;
+                }
+            */
+            .logo {
+                padding-bottom: 0.34em;
+            }
+
+            .row1{
+                line-height: 3.5em;
+            }
+
+
+        }
+
+        @media screen and (max-width: 530px ) {
+            .logo {
+                padding-bottom: 0.8em;
+            }
+
+            .row1{
+                line-height: 2.75em;
+            }
+
+        }
+
+
+        @media screen and (max-width: 480px ) {
+            .logo {
+                padding-bottom: 1.2em;
+            }
+
+            .row1{
+                line-height: 2.0em;
+            }
+
+            .paypal_image{
+                height: 24px;
+                width: 130px;
+            }
+        }
+
+        @media screen and (max-width: 430px ) {
+            .logo {
+                padding-bottom: 1.8em;
+            }
+
+            .row1{
+                line-height: 1.0em;
+            }
+        }
+
+        @media screen and (max-width: 380px ) {
+
+            .responsive_value_field_width_limit {
+                width: 32%;
+            }
+            .invalid_field_place_holder{
+                display: none;
+            }
+
+            .logo {
+                padding-bottom: 2.4em;
+            }
+
+            .row1{
+                line-height: 0.6em;
+            }
+
+
+        }
+
+        @media screen and (max-width: 355px ) {
+            .row1{
+                line-height: 0.45em;
+            }
+
+        }
+
+        @media screen and (max-width: 300px ) {
+            .row1{
+                line-height: 0em;
+            }
+
+            .logo {
+                padding-bottom: 2.6em;
+            }
+
+        }
+
+
+
+        @media screen and (max-width: 250px ) {
+
+            .row3,
+            .row4,
+            .row5,
+            .row6{
+                display: none;
+            }
+            .container{
+                padding:0;
+            }
+            .grid_12 { float:right; }
+            .sep {width:150px;}
+        }
+
+        @media screen and (max-width: 217px ) {
+
+            /*
+                .page_title{
+                    padding: 0em;
+                    margin: 0em;
+                    background: url("");
+                    background-size: 0%;
+                    width: 100%;
+                    line-height: 1;
+                    float: left;
+                }
+
+                h1{
+                    padding: 0em;
+                    margin: 0em;
+                    width: 100%;
+                    line-height: 1;
+                    float: left;
+                }*/
+        }
+
+
+
+    </style>
+
+    <!-- Material button with ripple -->
+    <script type="text/javascript">
+        jQuery(function($) {
+            function createRipple(y, x, cb) {
+                const ripple = '<div class="circle" style="top:' + y + 'px;left:' + x + 'px;"></div>';
+                const _ripple = $(ripple);
+                $('.ripple').append(_ripple);
+                setTimeout(function() {
+	                _ripple.remove()
+	                cb();
+                }, 900);
+            }
+
+            $('.mui-button').mousedown(function(e) {
+	            event.stopImmediatePropagation()
+	            const offset = $(e.target).offset();
+	            createRipple(e.pageY - offset.top, e.pageX - offset.left, function() {
+		            window.open('http://localhost:3000/pay/', '_top');
+	            });
+	            return false;
+            });
+        });
+    </script>
+
+    <!-- Custom CSS -->
+    <style type="text/css">
+
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        html body :focus {
+            box-shadow: 0 0 5px 3px #18b363,0 0 0 #fff inset !important;
+        }
+        .rtl #sk-header, .rtl #sk-panel {
+            right: auto !important;
+        }
+        html body #sk-accessibility {
+            margin-bottom: 0px;
+        }
+        html body #sk-header {
+            right: auto !important;
+            left: 0;
+        }
+        html body .block #sk-panel {
+            left: 7px;
+        }
+        html body .container {
+            padding: 2rem !important
+        }
+        input[type="text"], input[type="submit"], input[type="reset"], input[type="number"], select, .pci_image, #cancelBtn {
+            border-width: 0 0 1px 0 !important;
+            border-radius: 0 !important;
+        }
+
+        a[data-src=cancel] {
+            text-decoration: none;
+        }
+
+        * {
+            box-sizing:border-box;
+        }
+
+        @-webkit-keyframes ripple {
+            100% {
+                opacity: 0;
+                -webkit-transform: scale(2.5);
+                transform: scale(2.5);
+            }
+        }
+        @keyframes ripple {
+            100% {
+                opacity: 0;
+                -webkit-transform: scale(2.5);
+                transform: scale(2.5);
+            }
+        }
+
+        /* form starting stylings ------------------------------- */
+        .material-input-group {
+            position:relative;
+            margin: 2rem 0 1rem;
+        }
+        .material-input-group input {
+            font-size:18px;
+            padding:10px 10px 10px 5px;
+            display:block;
+            width:100%;
+            border:none;
+            border-bottom:1px solid #757575;
+        }
+        .material-input-group input:focus {
+            outline:none;
+        }
+
+        /* LABEL ======================================= */
+        .material-input-group label {
+            color:#999;
+            font-size:18px;
+            font-weight:normal;
+            position:absolute;
+            pointer-events:none;
+            right:5px;
+            top:10px;
+            transition:0.2s ease all;
+            -moz-transition:0.2s ease all;
+            -webkit-transition:0.2s ease all;
+        }
+
+        /* active state */
+        .material-input-group input:focus ~ label, .material-input-group input:valid ~ label 		{
+            top:-20px;
+            font-size:14px;
+            color:#5264AE;
+        }
+
+        /* BOTTOM BARS ================================= */
+        .material-input-group .bar {
+            position:relative; display:block; width:100%;
+        }
+
+        .material-input-group .bar:before, .bar:after {
+            content:'';
+            height:2px;
+            width:0;
+            bottom:1px;
+            position:absolute;
+            background:#5264AE;
+            transition:0.2s ease all;
+            -moz-transition:0.2s ease all;
+            -webkit-transition:0.2s ease all;
+        }
+        .material-input-group .bar:before {
+            left:50%;
+        }
+        .material-input-group .bar:after {
+            right:50%;
+        }
+
+        /* active state */
+        .material-input-group input:focus ~ .bar:before, .material-input-group input:focus ~ .bar:after {
+            width:50%;
+        }
+
+        @keyframes fall {
+            from {
+                top: -10px;
+                -webkit-transform: rotate(0);
+                -moz-transform: rotate(0);
+                -ms-transform: rotate(0);
+                -o-transform: rotate(0);
+                transform: rotate(0);
+            }
+            to {
+                top: 110vh;
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+
+        .mui-button {
+            position: relative;
+            padding: 0;
+            margin: 0;
+            width: 150px;
+            height: 50px;
+            border: none;
+            background: rgb(24, 179, 99);
+            color: #FFF;
+            box-shadow: 0 0 10px 0.5px rgba(0, 0, 0, 0);
+            -webkit-transition: all 0.15s linear;
+            -moz-transition: all 0.15s linear;
+            transition: all 0.15s linear;
+            margin: 0 auto;
+            display: block;
+        }
+        .mui-button:hover {
+            box-shadow: 0 0 10px 0.5px rgba(0, 0, 0, 0.2);
+            -webkit-transform: scale(0.98);
+            -moz-transform: scale(0.98);
+            -ms-transform: scale(0.98);
+            -o-transform: scale(0.98);
+            transform: scale(0.98);
+            cursor: pointer;
+        }
+        .mui-button:active, .mui-button:focus {
+            outline: none;
+        }
+        .mui-button .ripple {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        @keyframes ripple {
+            from {
+                -webkit-transform: scale(0);
+                -moz-transform: scale(0);
+                -ms-transform: scale(0);
+                -o-transform: scale(0);
+                transform: scale(0);
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+                -webkit-transform: scale(250);
+                -moz-transform: scale(250);
+                -ms-transform: scale(250);
+                -o-transform: scale(250);
+                transform: scale(250);
+            }
+        }
+        .mui-button .ripple .circle {
+            position: absolute;
+            background: rgba(251, 232, 211, 0.2);
+            border: 1px solid transparent;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: ripple 0.75s 1;
+            top: 50%;
+            left: 50%;
+        }
+        .mui-button p {
+            z-index: 1;
+            font-size: 18px;
+            margin: 0;
+        }
+
+    </style>
+
+</head>
+<body onload="onLoad()">
+
+
+<div class="container">
+    <form id="masterPassForm" onsubmit="" method="POST" action="ProcessMasterPass?txId=<%=mpiTxnId%>">
+        <input type="hidden" name="txId" value="<%=mpiTxnId%>" />
+    </form>
+    <form id="creditForm" onsubmit="return validateFormTrack2CardNo();" method="POST" action="ProcessCreditCard">
+        <input type="hidden" name="txId" value="<%=mpiTxnId%>" />
+        <input type="hidden" name="lang" value="<%=lang%>" />
+        <input type="hidden" name="cardNumber" id="cardNumber" value="" autocomplete="off" />
+        <input type="hidden" name="track2" id="track2" value="" autocomplete="off" />
+        <input type="hidden" name="last4d" value="" autocomplete="off" />
+        <input type="hidden" name="transactionCode" value="Phone" autocomplete="off" />
+        <input type="hidden" id="listPaymentsInterestValues" name="listPaymentsInterestValues" value="<%=listPaymentsInterestValues%>" />
+        <input type="hidden" id="listNumberOfPaymentsValues" name="listNumberOfPaymentsValues" value="<%=listNumberOfPaymentsValues%>" />
+        <!--<input type="hidden" name="userData1" value="" />
+        <input type="hidden" name="userData2" value="" />
+        <input type="hidden" name="userData3" value="" />
+        <input type="hidden" name="userData4" value="" />
+        <input type="hidden" name="userData5" value="" />
+        <input type="hidden" name="userData6" value="" />
+        <input type="hidden" name="userData7" value="" />
+        <input type="hidden" name="userData8" value="" />
+        <input type="hidden" name="userData9" value="" />
+        <input type="hidden" name="userData10" value="" />-->
+
+        <div class="grid_12 row8">
+
+            <div class="material-input-group">
+                <input required type="text" id="Track2CardNo" name="Track2CardNo" maxlength="80" width="100%" dir="ltr" autocomplete="off" onkeyup="limitInput(this,80)" onchange="return validateTrack2CardNo();" disabled />
+                <span class="bar"></span>
+                <label><%=CCNumber%>:</label>
+            </div>
+
+            <div class="grid_4 row8 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
+            <div class="grid_8 row8 td_style_invalidField" id="invalidCardNumber">&nbsp;</div>
+            <div class="grid_4 row8 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
+            <div class="grid_8 row8 td_style_invalidField" id="invalidTrack2">&nbsp;</div>
+        </div>
+        <div class="grid_12 row9">
+            <div class="grid_1 row9 td_style_fieldName">
+                <%=CCExp%>:
+            </div>
+            <div class="grid_8 row9 td_style_fieldValue">
+                <select id="expYear" name="expYear" onchange="validateExpDateOnChange();" disabled>
+                    <%=expYear%>
+                </select> -
+                <select id="expMonth" name="expMonth" onchange="validateExpDateOnChange();" disabled>
+                    <option value=""></option>
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+            </div>
+            <div class="grid_1 row9 invalid_field_place_holder">&nbsp;</div>
+            <div class="grid_8 row9 td_style_invalidField" id="invalidCardExp">&nbsp;</div>
+        </div>
+        <div class="grid_12 row10">
+
+            <div class="material-input-group" style="width: 50px;">
+                <input required type="text" pattern="[0-9]*" name="cvv" id="cvv" maxlength="4" dir="ltr" autocomplete="off" onkeyup="limitInput(this,4)" onchange="return validateCvv();" disabled />
+                <span class="bar"></span>
+                <label>CVV:</label>
+                <img id="qm" src="merchantPages/ResponsiveWebSources/images/qm.png" onmouseover="showHideCVVhelp();" onmouseout="showHideCVVhelp();" style="cursor:pointer;" />
+                <div id="CVVhelp" style="display: none; position: absolute; border: 1px #cccccc solid; padding: 10px; background: white;">
+                    <img src="merchantPages/ResponsiveWebSources/images/cvv.jpg" />
+                </div>
+            </div>
+
+            <div class="grid_4 row10 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
+            <div class="grid_8 row10 td_style_invalidField" id="invalidCvv">&nbsp;</div>
+        </div>
+        <!--
+        <div class="grid_12 row11">
+            <div class="grid_1 row11 td_style_fieldName">
+                <%=cvv_wneb%>:
+            </div>
+            <div class="grid_8 row11 td_style_fieldValue">
+                <select id="cvv_wneb" name="cvv_wneb" onchange="cvv_wneb_changed();" disabled >
+                    <option value=""></option>
+                    <option value="0"><%=cvv_wneb_0%></option>
+                    <option value="2"><%=cvv_wneb_2%></option>
+                    <option value="9"><%=cvv_wneb_9%></option>
+                </select>
+            </div>
+            <div class="grid_4 row10 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
+            <div class="grid_8 row10 td_style_invalidField">&nbsp;</div>
+        </div>
+        -->
+        <div class="grid_12 row12">
+
+            <div class="material-input-group">
+                <input required type="text" pattern="[0-9]*" id="personalId" name="personalId" maxlength="9" dir="ltr" autocomplete="off" onkeyup="limitInput(this,9)" onchange="return validatePersonalId()" disabled />
+                <span class="bar"></span>
+                <label><%=CCPId%>:</label>
+            </div>
+
+            <div class="grid_4 row12 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
+            <div class="grid_8 row12 td_style_invalidField" id="invalidPersonalId">&nbsp;</div>
+        </div>
+
+        <div id=" " style="display:<%=showPayments%>" ;>
+            <div class="grid_12 rowPayments" ;>
+                <div class="grid_4 rowPayments td_style_fieldPayments">
+                    <%=numberOfPaymentsLabel%>
+                </div>
+                <div class="grid_3 rowPayments td_style_fieldValue">
+                    <%=NumberOfPaymentvalue%>
+                    <select id="numberOfPayments" name="numberOfPayments" style="display:<%=showSelectNumberOfPayments%>" onchange=<%=onchangeNumberOfPayments%>>
+                        <%=NumberOfPaymentsOptions%>
+                    </select>
+                </div>
+                <div class="grid_12 row12 td_style_invalidField" style="width: 100%;" id="invalidNumberOfPayments">&nbsp;</div>
+            </div>
+            <div class="grid_12 rowPayments" style="display:<%=showFirstAndPeriodicalPayment%>" ;>
+                <div class="grid_4 rowPayments td_style_fieldPayments">
+                    <%=FirstPaymentLabel%>
+                </div>
+                <div class="grid_2 rowPayments td_style_fieldValue">
+                    <div id="firstPaymentDisp" class="data_style_payment" disabled="disabled">
+                        <%=getFirstPayment()%>
+                    </div>
+                </div>
+                <div class="responsive_page_line_break"></div>
+                <div class="grid_4 rowPayments td_style_fieldPayments">
+                    <%=periodicalPaymentLabel%>
+                </div>
+                <div class="grid_2 rowPayments td_style_fieldValue">
+                    <div id="periodicalPaymentDisp" class="data_style_payment" disabled="disabled">
+                        <%=getPeriodicalPayment()%>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12 rowPayments" style="display:<%=showPaymentsInterest%>">
+                <div class="responsive_page_line_break"></div>
+                <div class="grid_4 rowPayments td_style_fieldPayments">
+                    <%=paymentsInterestLabel%>
+                </div>
+                <div class="grid_2 rowPayments td_style_fieldValue">
+                    <div id="paymentsInterestDisp" disabled="disabled" class="data_style_payment">
+                        <%=paymentsInterest%>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="form_buttons" class="grid_12 row13 td_style_fieldValue">
+            <button id="submitBtn" type="submit" class="mui-button">
+                <div class="ripple"></div>
+                <p><%=formSend%></p>
+            </button>
+            <!--<input class="material-button" type="submit" id="submitBtn" value="<%=formSend%>" disabled />-->
+            <!--<input class="material-button" id="resetBtn" type="reset" value="<%=formReset%>" onclick="clearFields()" disabled />-->
+        </div>
+
+    </form>
+    <div>
+        <div id="form_buttons" class="td_style_fieldValue rowButtons">
+            <%=getMasterPassBtnHTML()%>
+        </div>
+        <%=getResponsivePaymentsHTML()%>
+    </div>
+    <div id="loading" class="loading_invisible">
+        <p id="loadingMsg" class="loading_invisible" aria-live="polite"></p>
+    </div>
+    <div class="grid_12 row14" height="100%" style="max-height: 3em;">
+        <img class="pci_image" width="12.1%" src="merchantPages/ResponsiveWebSources/images/pci_slice.gif" alt="pci logo" title="pci logo" />
+        <img class="pci_image" width="16%" src="merchantPages/ResponsiveWebSources/images/mastercard_slice.png" alt="mastercard" title="mastercard" />
+        <img class="pci_image viza_img" width="16%" src="merchantPages/ResponsiveWebSources/images/visa_slice.png" alt="visa" title="visa" />
+        <div class="responsive_page_line_break"></div>
+        <!-- GeoTrust True Site [tm] Smart Icon tag. Do not edit. -->
+        <!-- <div class="row14 pci_image" width="16%">
+            <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="//smarticon.geotrust.com/si.js"></SCRIPT>
+        </div> -->
+        <!-- end GeoTrust Smart Icon tag -->
+    </div>
+</div>
+
+
+</body>
+</html>
