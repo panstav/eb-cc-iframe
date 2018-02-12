@@ -1854,6 +1854,11 @@
         html body :focus {
             box-shadow: 0 0 5px 3px #18b363,0 0 0 #fff inset !important;
         }
+
+        #sk-header {
+            z-index: 1000;
+        }
+
         .rtl #sk-header, .rtl #sk-panel {
             right: auto !important;
         }
@@ -1868,7 +1873,7 @@
             left: 7px;
         }
         html body .container {
-            padding: 2rem !important
+            padding: 3rem 2rem 2rem !important;
         }
         input[type="text"], input[type="submit"], input[type="reset"], input[type="number"], select, #cancelBtn {
             border-width: 0 0 1px 0 !important;
@@ -1905,7 +1910,7 @@
             display:block;
             width:100%;
             border:none;
-            border-bottom:1px solid #757575;
+            border-bottom:1px solid #e0e0e0;
         }
         .material-input-group input:focus {
             outline:none;
@@ -1941,7 +1946,7 @@
             width:0;
             bottom:1px;
             position:absolute;
-            background:#5264AE;
+            background:#18b363;
             transition:0.2s ease all;
             -moz-transition:0.2s ease all;
             -webkit-transition:0.2s ease all;
@@ -1987,6 +1992,7 @@
 
         .mui-button {
             background: #18b363;
+            box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
         }
 
         a[data-src=cancel],
@@ -2002,8 +2008,8 @@
             -webkit-transition: all 0.15s linear;
             -moz-transition: all 0.15s linear;
             transition: all 0.15s linear;
-            margin-left: 1rem;
-            display: block;
+            margin: 0 0 1rem 1rem;
+            display: inline-block;
         }
         a[data-src=cancel]:hover,
         .mui-button:hover {
@@ -2057,11 +2063,12 @@
             top: 50%;
             left: 50%;
         }
-        a[data-src=cancel] p,
+        a[data-src=cancel] input,
         .mui-button p {
             z-index: 1;
             font-size: 1rem;
             margin: 0;
+            font-weight: 700;
         }
 
     </style>
@@ -2106,10 +2113,10 @@
             <div class="grid_8 row8 td_style_invalidField" id="invalidTrack2" role="alert">&nbsp;</div>
         </div>
         <div class="grid_12 row9" style="margin: 1rem 0;">
-            <div class="grid_3 row9 td_style_fieldName">
+            <div class="grid_3 row9">
                 תוקף כרטיס:
             </div>
-            <div class="grid_8 row9 td_style_fieldValue">
+            <div class="grid_8 row9">
                 <select id="expYear" name="expYear" onchange="validateExpDateOnChange();" data-src="expYear" aria-required="true" aria-label="שנה של תוקף הכרטיס">
                     <option value=""></option><option value="18">2018</option><option value="19">2019</option><option value="20">2020</option><option value="21">2021</option><option value="22">2022</option><option value="23">2023</option><option value="24">2024</option><option value="25">2025</option><option value="26">2026</option><option value="27">2027</option><option value="28">2028</option><option value="29">2029</option><option value="30">2030</option><option value="31">2031</option><option value="32">2032</option><option value="33">2033</option>
                 </select> -
@@ -2134,7 +2141,7 @@
         </div>
         <div class="grid_12 row10">
 
-            <div class="material-input-group" style="width: 5rem;"><label for="cvv" class="scr-reader" aria-hidden="true" data-src="empty-label" aria-label="לייבל ריק">לייבל ריק</label>
+            <div class="material-input-group" style="width: 6rem;"><label for="cvv" class="scr-reader" aria-hidden="true" data-src="empty-label" aria-label="לייבל ריק">לייבל ריק</label>
                 <input required="" type="text" pattern="[0-9]*" name="cvv" id="cvv" maxlength="4" dir="ltr" autocomplete="off" onkeyup="limitInput(this,4)" onchange="return validateCvv();" data-src="cvv" aria-required="true" aria-label="שלושת הספרות בגב בכרטיס">
                 <span class="bar"></span>
                 <label>CVV:</label>
@@ -2226,6 +2233,10 @@
                 <div class="ripple"></div>
                 <p>שליחה</p>
             </button>
+            <a href="CancelProcess?txId=3fc3ea9b-9152-4466-b2af-0238e2d1c9fe" onclick="window.location='CancelProcess?txId=3fc3ea9b-9152-4466-b2af-0238e2d1c9fe';" data-src="cancel" aria-label="ביטול">
+                <input id="cancelBtn" type="button" value="ביטול" tabindex="-1" role="button">
+                <span class="scr-reader" aria-hidden="true" data-src="empty-label" aria-label="לייבל ריק">לייבל ריק</span>
+            </a>
             <!--<input class="material-button" type="submit" id="submitBtn" value="שליחה" disabled />-->
             <!--<input class="material-button" id="resetBtn" type="reset" value="ניקוי" onclick="clearFields()" disabled />-->
             <!--<a href="CancelProcess?txId=3fc3ea9b-9152-4466-b2af-0238e2d1c9fe" onclick="window.location='CancelProcess?txId=3fc3ea9b-9152-4466-b2af-0238e2d1c9fe';" data-src="cancel" aria-label="ביטול"><input id="cancelBtn" type="button" value="ביטול" tabindex="-1" role="button"><span class="scr-reader" aria-hidden="true" data-src="empty-label" aria-label="לייבל ריק">לייבל ריק</span></a>-->

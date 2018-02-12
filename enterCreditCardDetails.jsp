@@ -64,6 +64,11 @@ response.setDateHeader("Expires", -1);
             html body :focus {
                 box-shadow: 0 0 5px 3px #18b363,0 0 0 #fff inset !important;
             }
+
+            #sk-header {
+                z-index: 1000;
+            }
+
             .rtl #sk-header, .rtl #sk-panel {
                 right: auto !important;
             }
@@ -78,7 +83,7 @@ response.setDateHeader("Expires", -1);
                 left: 7px;
             }
             html body .container {
-                padding: 2rem !important
+                padding: 3rem 2rem 2rem !important;
             }
             input[type="text"], input[type="submit"], input[type="reset"], input[type="number"], select, #cancelBtn {
                 border-width: 0 0 1px 0 !important;
@@ -115,7 +120,7 @@ response.setDateHeader("Expires", -1);
                 display:block;
                 width:100%;
                 border:none;
-                border-bottom:1px solid #757575;
+                border-bottom:1px solid #e0e0e0;
             }
             .material-input-group input:focus {
                 outline:none;
@@ -151,7 +156,7 @@ response.setDateHeader("Expires", -1);
                 width:0;
                 bottom:1px;
                 position:absolute;
-                background:#5264AE;
+                background:#18b363;
                 transition:0.2s ease all;
                 -moz-transition:0.2s ease all;
                 -webkit-transition:0.2s ease all;
@@ -213,7 +218,7 @@ response.setDateHeader("Expires", -1);
                 -moz-transition: all 0.15s linear;
                 transition: all 0.15s linear;
                 margin-left: 1rem;
-                display: block;
+                display: inline-block;
             }
             a[data-src=cancel]:hover,
             .mui-button:hover {
@@ -267,7 +272,7 @@ response.setDateHeader("Expires", -1);
                 top: 50%;
                 left: 50%;
             }
-            a[data-src=cancel] p,
+            a[data-src=cancel] input,
             .mui-button p {
                 z-index: 1;
                 font-size: 1rem;
@@ -315,7 +320,7 @@ response.setDateHeader("Expires", -1);
                     <div class="grid_8 row8 td_style_invalidField" id="invalidTrack2">&nbsp;</div>
                 </div>
                 <div class="grid_12 row9" style="margin: 1rem 0;">
-                    <div class="grid_3 row9 td_style_fieldName">
+                    <div class="grid_3 row9">
                         <%=CCExp%>:
                     </div>
                     <div class="grid_8 row9">
@@ -343,7 +348,7 @@ response.setDateHeader("Expires", -1);
                 </div>
                 <div class="grid_12 row10">
 
-                    <div class="material-input-group" style="width: 5rem;">
+                    <div class="material-input-group" style="width: 6rem;">
                         <input required type="text" pattern="[0-9]*" name="cvv" id="cvv" maxlength="4" dir="ltr" autocomplete="off" onkeyup="limitInput(this,4)" onchange="return validateCvv();" disabled />
                         <span class="bar"></span>
                         <label>CVV:</label>
@@ -435,6 +440,7 @@ response.setDateHeader("Expires", -1);
                         <div class="ripple"></div>
                         <p><%=formSend%></p>
                     </button>
+                    <%=getCancelBtnHTML("")%>
                     <!--<input class="material-button" type="submit" id="submitBtn" value="<%=formSend%>" disabled />-->
                     <!--<input class="material-button" id="resetBtn" type="reset" value="<%=formReset%>" onclick="clearFields()" disabled />-->
                 </div>
