@@ -90,6 +90,17 @@ response.setDateHeader("Expires", -1);
                 border-radius: 0 !important;
             }
 
+            @media (min-width: 36rem) {
+                .expiration-and-ccv > div {
+                    display: inline-block;
+                    width: 46%;
+                }
+            }
+
+            .expiration-selection {
+                margin-left: 2rem;
+            }
+
             .expiration-selection > span {
                 display: inline-block;
             }
@@ -327,50 +338,56 @@ response.setDateHeader("Expires", -1);
                     <div class="grid_4 row8 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
                     <div class="grid_8 row8 td_style_invalidField" id="invalidTrack2">&nbsp;</div>
                 </div>
-                <div class="expiration-selection grid_12" style="margin-left: 1rem;">
-                    <span style="margin-left: 1rem;">
-                        <%=CCExp%>:
-                    </span>
-                    <span>
-                        <select id="expYear" name="expYear" onchange="validateExpDateOnChange();" disabled>
-                            <%=expYear%>
-                        </select> -
-                        <select id="expMonth" name="expMonth" onchange="validateExpDateOnChange();" disabled>
-                            <option value=""></option>
-                            <option value="01">01</option>
-                            <option value="02">02</option>
-                            <option value="03">03</option>
-                            <option value="04">04</option>
-                            <option value="05">05</option>
-                            <option value="06">06</option>
-                            <option value="07">07</option>
-                            <option value="08">08</option>
-                            <option value="09">09</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                        </select>
-                    </span>
-                    <div>
-                        <div class="grid_1 row9 invalid_field_place_holder">&nbsp;</div>
-                        <div class="grid_8 row9 td_style_invalidField" id="invalidCardExp">&nbsp;</div>
-                    </div>
-                </div>
-                <div class="grid_12 row10">
 
-                    <div class="material-input-group" style="width: 6rem;">
-                        <input required type="text" pattern="[0-9]*" name="cvv" id="cvv" maxlength="4" dir="ltr" autocomplete="off" onkeyup="limitInput(this,4)" onchange="return validateCvv();" disabled />
-                        <span class="bar"></span>
-                        <label>CVV:</label>
-                        <img id="qm" src="merchantPages/ResponsiveWebSources/images/qm.png" onmouseover="showHideCVVhelp();" onmouseout="showHideCVVhelp();" style="cursor:pointer;" />
-                        <div id="CVVhelp" style="display: none; position: absolute; z-index: 1000; border: 1px #cccccc solid; padding: 10px; background: white;">
-                            <img src="merchantPages/ResponsiveWebSources/images/cvv.jpg" />
+                <div class="grid_12 expiration-and-ccv">
+
+                    <div class="expiration-selection grid_12" style="margin-left: 1rem;">
+                        <span style="margin-left: 1rem;">
+                            <%=CCExp%>:
+                        </span>
+                        <span>
+                            <select id="expYear" name="expYear" onchange="validateExpDateOnChange();" disabled>
+                                <%=expYear%>
+                            </select> -
+                            <select id="expMonth" name="expMonth" onchange="validateExpDateOnChange();" disabled>
+                                <option value=""></option>
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </span>
+                        <div>
+                            <div class="grid_1 row9 invalid_field_place_holder">&nbsp;</div>
+                            <div class="grid_8 row9 td_style_invalidField" id="invalidCardExp">&nbsp;</div>
                         </div>
                     </div>
+                    <div class="grid_12 row10">
 
-                    <div class="grid_4 row10 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
-                    <div class="grid_8 row10 td_style_invalidField" id="invalidCvv">&nbsp;</div>
+                        <div class="material-input-group" style="width: 6rem;">
+                            <input required type="text" pattern="[0-9]*" name="cvv" id="cvv" maxlength="4" dir="ltr" autocomplete="off" onkeyup="limitInput(this,4)" onchange="return validateCvv();" disabled />
+                            <span class="bar"></span>
+                            <label>CVV:</label>
+                            <img id="qm" src="merchantPages/ResponsiveWebSources/images/qm.png" onmouseover="showHideCVVhelp();" onmouseout="showHideCVVhelp();" style="cursor:pointer;" />
+                            <div id="CVVhelp" style="display: none; position: absolute; z-index: 1000; border: 1px #cccccc solid; padding: 10px; background: white;">
+                                <img src="merchantPages/ResponsiveWebSources/images/cvv.jpg" />
+                            </div>
+                        </div>
+
+                        <div class="grid_4 row10 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
+                        <div class="grid_8 row10 td_style_invalidField" id="invalidCvv">&nbsp;</div>
+                    </div>
+
                 </div>
+
                 <!--
                 <div class="grid_12 row11">
                     <div class="grid_1 row11 td_style_fieldName">

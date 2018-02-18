@@ -297,6 +297,9 @@
 					e.style.borderColor='';
 					msg("invalidCardNumber","");
 				}
+
+                markFieldValidity('Track2CardNo', validField);
+
 				return validField;
 			}
 			function validateFormTrack2CardNo()
@@ -308,6 +311,7 @@
 				{
 					displayImgWorking();
 				}
+
 				return isValid;
 			}
 			function validateAndLoadSubmit()
@@ -505,6 +509,9 @@
 					document.getElementById('expYear').style.borderColor='';
 					msg("invalidCardExp","");
 				}
+
+                markFieldValidity('ExpDate', validField);
+
 				return validField;
 			}
 
@@ -524,7 +531,10 @@
 					e.style.borderColor='';
 					msg("invalidCvv","");
 				}
-				return validField;
+
+                markFieldValidity('cvv', validField);
+
+                return validField;
 			}
 
 			function validatePersonalId()
@@ -544,6 +554,9 @@
 					e.style.borderColor='';
 					msg("invalidPersonalId","");
 				}
+
+                markFieldValidity('personalId', validField);
+
 				return validField;
 			}
 
@@ -1307,11 +1320,6 @@
          * Re-set default cursor for disabled elements
          */
 
-        button[disabled],
-        input[disabled] {
-            cursor: default;
-        }
-
         /*
          * 1. Addresses box sizing set to content-box in IE8/9
          * 2. Removes excess padding in IE8/9
@@ -1847,6 +1855,22 @@
 			});
     </script>
 
+    <script type="text/javascript">
+	    let ccFormValidFields = [];
+
+	    function markFieldValidity(fieldName, isValid) {
+		    if (isValid) {
+			    if (!ccFormValidFields.includes(fieldName)) ccFormValidFields.push(fieldName);
+		    } else {
+			    ccFormValidFields = ccFormValidFields.filter((validFieldName) => validFieldName !== fieldName);
+		    }
+
+            console.log(ccFormValidFields);
+
+            $('#submitBtn').prop('disabled', ccFormValidFields.length !== 4);
+	    }
+    </script>
+
     <!-- Custom CSS -->
     <style type="text/css">
 
@@ -1877,6 +1901,11 @@
         input[type="text"], input[type="submit"], input[type="reset"], input[type="number"], select, #cancelBtn {
             border-width: 0 0 1px 0 !important;
             border-radius: 0 !important;
+        }
+
+        button[disabled] {
+            cursor: not-allowed !important;
+            opacity: .3;
         }
 
         .expiration-selection > span {
@@ -2237,7 +2266,7 @@
         </div>
 
         <div id="form_buttons" class="grid_12 row13 td_style_fieldValue">
-            <button id="submitBtn" type="submit" class="mui-button" role="button">
+            <button id="submitBtn" type="submit" class="mui-button" disabled role="button">
                 <div class="ripple"></div>
                 <p>שליחה</p>
             </button>
