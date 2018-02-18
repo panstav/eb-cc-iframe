@@ -132,7 +132,6 @@ response.setDateHeader("Expires", -1);
 
             /* LABEL ======================================= */
             .material-input-group label {
-                font-size:18px;
                 font-weight:normal;
                 position:absolute;
                 pointer-events:none;
