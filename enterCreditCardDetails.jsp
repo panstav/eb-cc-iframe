@@ -37,23 +37,27 @@ response.setDateHeader("Expires", -1);
 
         <!-- Material button with ripple -->
         <script type="text/javascript">
-            jQuery(function($) {
-                function createRipple(y, x, cb) {
-                    cb = cb || function(){};
-                    const ripple = '<div class="circle" style="top:' + y + 'px;left:' + x + 'px;"></div>';
-                    const _ripple = $(ripple);
-                    $('.ripple').append(_ripple);
-                    setTimeout(function() {
-                        _ripple.remove();
-                        cb();
-                    }, 900);
-                }
+			jQuery(function($) {
+				function createRipple(elem, y, x, cb) {
+					cb = cb || function(){};
+					const ripple = '<div class="circle" style="top:' + y + 'px;left:' + x + 'px;"></div>';
+					const _ripple = $(ripple);
 
-                $('.mui-button, a[data-src=cancel]').mousedown(function(e) {
-                    const offset = $(e.target).offset();
-                    createRipple(e.pageY - offset.top, e.pageX - offset.left);
-                });
-            });
+					let rippleContainer = $(elem).find('.ripple');
+					if (!rippleContainer.length) rippleContainer = $(elem).parent().find('.ripple');
+
+                    rippleContainer.append(_ripple);
+					setTimeout(function() {
+						_ripple.remove();
+						cb();
+					}, 900);
+				}
+
+				$('.mui-button, a[data-src=cancel]').mousedown(function(e) {
+					const offset = $(e.target).offset();
+					createRipple(e.target, e.pageY - offset.top, e.pageX - offset.left);
+				});
+			});
         </script>
 
         <style type="text/css">
