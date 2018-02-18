@@ -90,6 +90,10 @@ response.setDateHeader("Expires", -1);
                 border-radius: 0 !important;
             }
 
+            .expiration-selection > span {
+                display: inline-block;
+            }
+
             * {
                 box-sizing:border-box;
             }
@@ -319,11 +323,11 @@ response.setDateHeader("Expires", -1);
                     <div class="grid_4 row8 td_style_invalidField invalid_field_place_holder">&nbsp;</div>
                     <div class="grid_8 row8 td_style_invalidField" id="invalidTrack2">&nbsp;</div>
                 </div>
-                <div class="grid_12 row9" style="margin: 1rem 0;">
-                    <div class="grid_3 row9">
+                <div class="expiration-selection grid_12" style="margin-left: 1rem;">
+                    <span style="margin-left: 1rem;">
                         <%=CCExp%>:
-                    </div>
-                    <div class="grid_8 row9">
+                    </span>
+                    <span>
                         <select id="expYear" name="expYear" onchange="validateExpDateOnChange();" disabled>
                             <%=expYear%>
                         </select> -
@@ -342,9 +346,11 @@ response.setDateHeader("Expires", -1);
                             <option value="11">11</option>
                             <option value="12">12</option>
                         </select>
+                    </span>
+                    <div>
+                        <div class="grid_1 row9 invalid_field_place_holder">&nbsp;</div>
+                        <div class="grid_8 row9 td_style_invalidField" id="invalidCardExp">&nbsp;</div>
                     </div>
-                    <div class="grid_1 row9 invalid_field_place_holder">&nbsp;</div>
-                    <div class="grid_8 row9 td_style_invalidField" id="invalidCardExp">&nbsp;</div>
                 </div>
                 <div class="grid_12 row10">
 

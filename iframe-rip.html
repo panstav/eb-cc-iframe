@@ -1880,6 +1880,10 @@
             border-radius: 0 !important;
         }
 
+        .expiration-selection > span {
+            display: inline-block;
+        }
+
         * {
             box-sizing:border-box;
         }
@@ -2112,11 +2116,11 @@
             <div class="grid_4 row8 td_style_invalidField invalid_field_place_holder" role="alert">&nbsp;</div>
             <div class="grid_8 row8 td_style_invalidField" id="invalidTrack2" role="alert">&nbsp;</div>
         </div>
-        <div class="grid_12 row9" style="margin: 1rem 0;">
-            <div class="grid_3 row9">
+        <div class="expiration-selection grid_12" style="margin-left: 1rem;">
+            <span>
                 תוקף כרטיס:
-            </div>
-            <div class="grid_8 row9">
+            </span>
+            <span>
                 <select id="expYear" name="expYear" onchange="validateExpDateOnChange();" data-src="expYear" aria-required="true" aria-label="שנה של תוקף הכרטיס">
                     <option value=""></option><option value="18">2018</option><option value="19">2019</option><option value="20">2020</option><option value="21">2021</option><option value="22">2022</option><option value="23">2023</option><option value="24">2024</option><option value="25">2025</option><option value="26">2026</option><option value="27">2027</option><option value="28">2028</option><option value="29">2029</option><option value="30">2030</option><option value="31">2031</option><option value="32">2032</option><option value="33">2033</option>
                 </select> -
@@ -2135,9 +2139,11 @@
                     <option value="11">11</option>
                     <option value="12">12</option>
                 </select>
+            </span>
+            <div>
+                <div class="grid_1 row9 invalid_field_place_holder">&nbsp;</div>
+                <div class="grid_8 row9 td_style_invalidField" id="invalidCardExp">&nbsp;</div>
             </div>
-            <div class="grid_1 row9 invalid_field_place_holder">&nbsp;</div>
-            <div class="grid_8 row9 td_style_invalidField" id="invalidCardExp" role="alert">&nbsp;</div>
         </div>
         <div class="grid_12 row10">
 
