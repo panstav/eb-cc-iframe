@@ -281,6 +281,11 @@ response.setDateHeader("Expires", -1);
                 font-size: 1rem;
                 margin: 0;
             }
+
+            div#form_buttons p, div#form_buttons input {
+                font-size: 1.2rem;
+            }
+
         </style>
     </head>
     <body onload="onLoad();">
