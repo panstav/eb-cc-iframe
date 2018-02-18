@@ -65,10 +65,6 @@ response.setDateHeader("Expires", -1);
                 font-family: 'Roboto', sans-serif;
             }
 
-            html body :focus {
-                box-shadow: 0 0 5px 3px #18b363,0 0 0 #fff inset !important;
-            }
-
             #sk-header {
                 z-index: 1000;
             }
